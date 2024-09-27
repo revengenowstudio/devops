@@ -1,0 +1,38 @@
+name: Liveness check
+
+# Controls when the workflow will run
+on:
+  schedule:
+    - cron: '0 * * * *'
+  
+  workflow_dispatch:
+    
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "build"
+  liveness-detect:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v4
+
+      - name: Download detector
+        run: |
+          RELEASE_INFO=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+          https://github.com/revengenowstudio/HealthCheckAPI/releases/latest)
+
+          ASSET_URL=$(echo $RELEASE_INFO | jq -r '.assets[0].url')
+          
+          curl -L -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" -o release.zip $ASSET_URL
+
+      - name: Unzip the release file
+        run: |
+          unzip release.zip -d ./release
+      - name: Run the program
+        run: |
+          chmod +x ./release/your-script.sh  # 替换为实际的脚本文件名
+          ./release/your-script.sh
