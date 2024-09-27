@@ -22,16 +22,17 @@ jobs:
 
       - name: Download detector
         run: |
-          RELEASE_INFO=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
-          https://github.com/revengenowstudio/HealthCheckAPI/releases/latest)
+          RELEASE_INFO=$(curl -s -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+          https://api.github.com/repos/revengenowstudio/HealthCheckAPI/releases/latest)
 
-          ASSET_URL=$(echo $RELEASE_INFO | jq -r '.assets[0].url')
+          ASSET_URL=$(echo $RELEASE_INFO | grep -o '"browser_download_url": "[^"]*' | grep -o '[^"]*$')
           
-          curl -L -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" -o release.zip $ASSET_URL
+          curl -L -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" -o HealthCheckAPI $ASSET_URL
 
-      - name: Unzip the release file
-        run: |
-          unzip release.zip -d ./release
+      # - name: Unzip the release file
+      #   run: |
+      #     unzip release.zip -d ./release
+      
       - name: Run the program
         run: |
           chmod +x ./release/your-script.sh  # 替换为实际的脚本文件名
