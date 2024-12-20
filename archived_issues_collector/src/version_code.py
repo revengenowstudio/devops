@@ -67,7 +67,7 @@ class VersionCode():
         # 版本号映射到int64的关系如下：
         # 0.99.914b55
         # 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000
-        #           0         9    9         9    1    4    b         5    5    空着
+        #           0         9    9         9    1    4    b         5    5    左移4位
 
         # G1028P3
         # 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000
@@ -78,15 +78,6 @@ class VersionCode():
             bit_per_part = [8, 16, 8, 8]
             
         total_bit = sum(bit_per_part)
-        # total_bit = 56
-
-        # for index, part in enumerate(parts):
-        #     if index == 0:
-        #         result = part << (total_bit -
-        #                           sum(bit_per_part[:index+1]))
-        #         continue
-        #     result |= part << (
-        #         total_bit - sum(bit_per_part[:index+1]))
         
         # 从高位到低位依次组合各部分
         for index, part in enumerate(parts):
