@@ -1,0 +1,42 @@
+name: Archive Issues Collector
+
+on:
+  workflow_dispatch: 
+    inputs:
+      version_start:
+        description: 起始版本号
+        required: true
+      version_end:
+        description: 结束版本号
+        required: true
+
+env:
+  REPOSITORY_TOKEN: ${{ secrets.REPOSITORY_TOKEN }}
+  VERSION_START : ${{ github.event.inputs.VERSION_START }}
+  VERSION_END : ${{ github.event.inputs.VERSION_END }}
+
+jobs:
+  archive-issues-collector:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python and install dependencies
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+          cache: 'pip' # caching pip dependencies
+      - run: |
+          pip install -r ./archived_issues_collector/requirements.txt
+
+      - name: Run the program
+        run: |
+          python ./archived_issues_collector/src/main.py --config ./archived_issues_collector/config/config.json
+
+      - name: Upload aircraft file
+        uses: actions/upload-artifact@v3
+        with:
+          name: aircraft-file
+          path: ./archived_issues_collector/output/aircraft.md
+          retention-days: 10

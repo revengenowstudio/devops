@@ -1,0 +1,24 @@
+{
+    "archived_issues_info": [
+        {
+            "url": "https://IdontKnow.com",
+            "json_api": false,
+            "content_key": "content",
+            "base64_decode": false,
+            "http_headers":{
+                "Accept":"application/vnd.github.raw+json"
+            }
+        },
+        {
+            "url": "https://IdontKnow.com",
+            "json_api": true,
+            "content_key": "content",
+            "base64_decode": true,
+            "http_headers":{
+                "Accept":"application/vnd.github.raw+json"
+            }
+        }
+    ],
+    "output_path": "./archived_issues_collector/output/aircraft.md"
+
+}
