@@ -38,5 +38,5 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: aircraft-file
-          path: ./archived_issues_collector/output/aircraft.md
+          path: ./output/aircraft.md
           retention-days: 10

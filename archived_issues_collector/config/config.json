@@ -5,8 +5,9 @@
             "json_api": false,
             "content_key": "content",
             "base64_decode": false,
-            "http_headers":{
-                "Accept":"application/vnd.github.raw+json"
+            "use_token":false,
+            "http_headers": {
+                "Accept": "application/vnd.github.raw+json"
             }
         },
         {
@@ -14,11 +15,16 @@
             "json_api": true,
             "content_key": "content",
             "base64_decode": true,
-            "http_headers":{
-                "Accept":"application/vnd.github.raw+json"
+            "use_token":false,
+            "http_headers": {
+                "Accept": "application/vnd.github.raw+json"
             }
         }
     ],
-    "output_path": "./archived_issues_collector/output/aircraft.md"
-
+    "archive_document": {
+        "skip_header_rows": 5,
+        "table_separator": "|",
+        "archived_version_column_index": 3
+    },
+    "output_path": "./output/aircraft.md"
 }

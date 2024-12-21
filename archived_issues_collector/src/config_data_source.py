@@ -41,10 +41,9 @@ def apply_place_holder(obj: dict,
 
 class EnvConfigDataSource(DataSource):
     def load(self, config: Config) -> None:
-        config.token = os.environ[Env.TOKEN]
-        config.issue_output_path = os.environ[Env.ISSUE_OUTPUT_PATH]
-        config.ci_event_type = os.environ[Env.CI_EVENT_TYPE]
-        config.archived_document_path = os.environ[Env.ARCHIVED_DOCUMENT_PATH]
+        config.repository_token = os.environ[Env.REPOSITORY_TOKEN]
+        config.version_start = os.environ[Env.VERSION_START]
+        config.version_end = os.environ[Env.VERSION_END]
 
 
 class JsonConfigDataSource(DataSource):
@@ -75,10 +74,11 @@ class JsonConfigDataSource(DataSource):
             place_holder=raw_json
         )
 
-        issue_type = Config.IssueType(
-            **raw_json.pop("issue_type"))
-        archived_document = Config.ArchivedDocument(
-            **raw_json.pop("archived_document"))
+        archive_document = Config.ArchivedDocument(
+            **raw_json.pop("archive_document"))
+        archived_issues_info = [Config.ArchivedIssuesInfo(
+            **dict_item) for dict_item in
+            raw_json.pop("archived_issues_info")]
         config.__dict__.update(**raw_json)
-        config.issue_type = issue_type
-        config.archived_document = archived_document
+        config.archive_document = archive_document
+        config.archived_issues_info = archived_issues_info
