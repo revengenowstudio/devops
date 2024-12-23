@@ -10,7 +10,18 @@
             "request": "launch",
             "program": "archived_issues_collector/src/main.py",
             // "cwd": "${workspaceFolder}",
-            "args": [],
+            "args": [
+                "--config",
+                "archived_issues_collector/config/config.json",
+                "--repository-token",
+                "",
+                "--version-start",
+                "0.99.915",
+                "--version-end",
+                "0.99.916a",
+                "--match-introduce-version",
+                "true"
+            ],
             "console": "integratedTerminal"
         },
         {

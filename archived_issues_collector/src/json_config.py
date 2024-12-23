@@ -41,15 +41,20 @@ class Config():
     class ArchivedDocument():
         skip_header_rows: int = 0
         table_separator: str = str()
+        introduce_version_column_index: int = 0
         archived_version_column_index: int = 0
 
     # 从env读取
-    repository_token: str = str()
-    version_start: str = str()
-    version_end: str = str()
+    # repository_token: str = str()
+    # version_start: str = str()
+    # version_end: str = str()
 
     # 从命令行参数读取
     config_path: str = str()
+    repository_token: str = str()
+    version_start: str = str()
+    version_end: str = str()
+    match_introduce_version: bool = False
 
     # 从配置文件json读取
     archived_issues_info: list[ArchivedIssuesInfo] = field(

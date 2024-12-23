@@ -9,11 +9,15 @@ on:
       version_end:
         description: 结束版本号
         required: true
+      match_introduce_version:
+        description: 是否匹配引入版本号
+        type: boolean
+        required: false
+        default: false
+        
 
 env:
   REPOSITORY_TOKEN: ${{ secrets.REPOSITORY_TOKEN }}
-  VERSION_START : ${{ github.event.inputs.VERSION_START }}
-  VERSION_END : ${{ github.event.inputs.VERSION_END }}
 
 jobs:
   archive-issues-collector:
@@ -32,11 +36,11 @@ jobs:
 
       - name: Run the program
         run: |
-          python ./archived_issues_collector/src/main.py --config ./archived_issues_collector/config/config.json
+          python ./archived_issues_collector/src/main.py --config ./archived_issues_collector/config/config.json --version-start ${{ inputs.version_start }} --version-end ${{ inputs.version_end }} --match-introduce-version ${{ inputs.match_introduce_version }}
 
       - name: Upload aircraft file
         uses: actions/upload-artifact@v3
         with:
           name: aircraft-file
           path: ./output/aircraft.md
-          retention-days: 10
+          retention-days: 30

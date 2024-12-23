@@ -1,46 +1,42 @@
-
-
-import httpx
-
 from base64_decode import base64_decode_str
+
+from http_request import http_request
 
 
 class ArchiveDocumentCollector():
     def __init__(self, token: str | None = None):
-        self.__http_client = httpx.Client()
         self.__token_header = self.__make_token_header(token)
 
     def __make_token_header(self, token: str | None) -> dict[str, str]:
         if token is None:
             return {}
         return {
-            "Authorization": f"Bearer  {token}"
+            "Authorization": f"Bearer {token}"
         }
 
     def collect_document(
         self,
         url: str,
-        json_api: bool,
         content_key: str,
+        http_headers: dict[str, str],
+        json_api: bool,
         base64_decode: bool,
         use_token: bool,
-        http_headers: dict[str, str],
-
     ) -> str:
         result = ""
 
+        new_headers = http_headers.copy()
         if use_token:
-            http_headers.update(self.__token_header)
+            new_headers.update(self.__token_header)
 
-        response = self.__http_client.get(
-            url, headers=http_headers
+        response = http_request(
+            url=url,
+            method="GET",
+            headers=new_headers
         )
 
         if json_api:
-            if content_key.strip():
-                result = response.json()[content_key]
-            else:
-                result = response.json()
+            result = response.json()[content_key]
         else:
             result = response.text
 

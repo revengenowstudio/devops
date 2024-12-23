@@ -1,7 +1,10 @@
 import re
-from enum import IntEnum
 import string
+from enum import IntEnum
 from typing import Iterator
+
+from exception import ErrorMessage
+from log import Log
 
 
 class VersionType(IntEnum):
@@ -11,6 +14,12 @@ class VersionType(IntEnum):
 
 
 class VersionCode():
+
+    @staticmethod
+    def should_version_valid(raw_version: str) -> None:
+        if raw_version == "":
+            raise ValueError(
+                Log.input_version_empty)
 
     @staticmethod
     def __split_version_to_list(raw_version: str) -> list[str]:
@@ -27,8 +36,8 @@ class VersionCode():
                 converted.append(int(part))
             else:
                 # 字母部分转换为 ASCII 码值，假设是小写字母
-                # converted.append(ord(part.lower()) - ord('a') + 1) 
-                converted.append(ord(part.lower())) 
+                # converted.append(ord(part.lower()) - ord('a') + 1)
+                converted.append(ord(part.lower()))
         return converted
 
     @property
@@ -48,9 +57,15 @@ class VersionCode():
 
         return VersionType.special
 
-    def __init__(self, raw_version: str) -> None:
+    def __init__(self,
+                 raw_version: str,
+                 special_version: bool = False
+                 ) -> None:
         self.__raw: str = raw_version
-        self.__version_type = self.__check_version_type(raw_version)
+        if special_version:
+            self.__version_type = VersionType.special
+        else:
+            self.__version_type = self.__check_version_type(raw_version)
 
         self.__split_version: list[str] = [raw_version]
         if self.__version_type != VersionType.special:
@@ -76,9 +91,9 @@ class VersionCode():
         bit_per_part: list[int] = [8, 8, 16, 8, 8]
         if self.type == VersionType.old:
             bit_per_part = [8, 16, 8, 8]
-            
+
         total_bit = sum(bit_per_part)
-        
+
         # 从高位到低位依次组合各部分
         for index, part in enumerate(parts):
             # 计算当前部分的位移量
@@ -86,18 +101,16 @@ class VersionCode():
             # 使用按位或操作将当前部分组合到 result 中
             result |= (part & ((1 << bit_per_part[index]) - 1)) << shift_amount
 
-        # result = (parts[0] << 40) | (parts[1] << 32) | (
-        #     parts[2] << 16) | (parts[3] << 8) | parts[4]
-
         if self.type == VersionType.new:
             # 新版本号永远要比旧版本大
             result = result << 4
-        
-        print(f'{self.__raw} :'
-            , self.parts)
-        bin_text = re.findall(".{4}",bin(result)[2:])
-        print(f'{self.__raw} :'
-            ," ".join(bin_text))
+
+        # 测试用打印int64映射结果
+        # print(f'{self.__raw} :'
+        #     , self.parts)
+        # bin_text = re.findall(".{4}",bin(result)[2:])
+        # print(f'{self.__raw} :'
+        #     ," ".join(bin_text))
         return result
 
     def __lt__(self, other_version: 'VersionCode') -> bool:
@@ -159,111 +172,3 @@ class VersionCode():
 
     def __iter__(self) -> Iterator[str]:
         return iter(self.__split_version)
-
-
-# class Version(ABC):
-#     def __init__(self, raw_version: str) -> None:
-#         self.__raw: str
-#         self.__split_version: list[int]
-
-#     @abstractmethod
-#     def __lt__(self, other_version: 'Version') -> bool:
-#         '''self < other_version'''
-#         pass
-
-#     def __le__(self, other_version: 'Version') -> bool:
-#         '''self > other_version'''
-#         if self < other_version:
-#             return False
-#         else:
-#             return True
-
-#     def __eq__(self, other_version: 'Version') -> bool:
-#         '''self == other_version'''
-#         if str(self) == str(other_version):
-#             return True
-#         else:
-#             return False
-
-#     def __repr__(self) -> str:
-#         return self.__raw
-
-#     def __str__(self) -> str:
-#         return self.__raw
-
-#     def __getitem__(self, index: int | slice) -> int | list[int]:
-#         return self.__split_version[index]
-
-#     def __iter__(self) -> Iterator[int]:
-#         return iter(self.__split_version)
-
-
-# class NewVersion(Version):
-#     '''处理类似"0.99.915"的新版本号的类，可直接比较大小'''
-
-#     def __init__(self, raw_version: str) -> None:
-#         super().__init__(raw_version)
-#         self.__raw: str = raw_version
-#         if "." not in raw_version:
-#             raise ValueError(
-#                 f"{raw_version} is not a valid new version string")
-
-#         # TODO 这里还没考虑  "0.99.914b55" 后面有字母的情况
-#         self.__split_version = list(map(int, raw_version.split(".")))
-
-#     def __lt__(self, other_version: Version) -> bool:
-#         if isinstance(other_version, OldVersion):
-#             return False
-
-#         other_version_more_item = False
-#         for index, self_sub_version in enumerate(self.__split_version):
-#             try:
-#                 if self_sub_version < other_version.__split_version[index]:
-#                     return True
-#             except IndexError:
-#                 other_version_more_item = True
-
-#         if (other_version_more_item):
-#             other_max_index = len(other_version.__split_version) - 1
-#             if self[0:other_max_index] == other_version.__split_version:
-#                 return True
-
-#             for index, self_sub_version in enumerate(self.__split_version[other_max_index:]):
-#                 if self_sub_version > other_version.__split_version[index]:
-#                     return False
-
-#         return False
-
-
-# class OldVersion(Version):
-#     '''处理类似"G1024"的新版本号的类，可直接比较大小'''
-
-#     @staticmethod
-#     def __split_per_two_char(raw_version: str) -> list[int]:
-#         result: list[int] = []
-#         for index, char in enumerate(range(1, len(raw_version))):
-#             if index % 2 == 0:
-#                 result.append(int(raw_version[index:index+1]))
-#         return result
-
-#     def __init__(self, raw_version: str) -> None:
-#         super().__init__(raw_version)
-#         self.__raw: str = raw_version
-#         if "." in raw_version:
-#             raise ValueError(
-#                 f"{raw_version} is a new version string")
-#         if not raw_version[0].isalpha():
-#             raise ValueError(
-#                 f"{raw_version} is not a valid old version string")
-#         self.__split_version = [
-#             ord(raw_version[0]), *self.__split_per_two_char(raw_version)
-#         ]
-
-#     def __lt__(self, other_version: Version) -> bool:
-#         if isinstance(other_version, NewVersion):
-#             return True
-
-#         for index, self_sub_version in enumerate(self.__split_version):
-#             if self_sub_version < other_version.__split_version[index]:
-#                 return True
-#         return False
