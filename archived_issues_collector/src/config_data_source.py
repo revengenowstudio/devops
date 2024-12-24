@@ -7,6 +7,7 @@ from data_source import DataSource
 from json_config import Config
 from exception import ErrorMessage, ParseConfigError
 from get_args import get_value_from_args, get_value_from_args_or_default
+from config_checker import ConfigChecker
 
 FORMAT_MAP_BLACK_LIST = [
     "version_regex",
@@ -82,19 +83,33 @@ class JsonConfigDataSource(DataSource):
                          ).read_text(encoding="utf-8")
                 )
             )
+            ConfigChecker.run_all(raw_json)
+
+            raw_line_pickers = [
+                Config.RawLinePicker(**dict_item)
+                for dict_item in
+                raw_json["archive_document"
+                         ].pop("raw_line_pickers")
+            ]
             archive_document = Config.ArchivedDocument(
                 **raw_json.pop("archive_document"))
-            archived_issues_info = [Config.ArchivedIssuesInfo(
-                **dict_item) for dict_item in
-                raw_json.pop("archived_issues_info")]
+            archived_issues_info = [
+                Config.ArchivedIssuesInfo(
+                    **dict_item) for dict_item in
+                raw_json.pop("archived_issues_info")
+            ]
             print(Log.load_archived_source
                   .format(count=len(archived_issues_info)))
             config.__dict__.update(**raw_json)
             config.archive_document = archive_document
+            config.archive_document.raw_line_pickers = raw_line_pickers
             config.archived_issues_info = archived_issues_info
-        except Exception:
+        except Exception as exc:
             raise ParseConfigError(
-                ErrorMessage.parse_config_failed)
+                ErrorMessage.parse_config_failed
+                .format(
+                    exc=exc
+                ))
 
         print(Log.loading_something_success
               .format(something=config_path))

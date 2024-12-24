@@ -68,11 +68,17 @@ def main():
                 version_start_str=config.version_start,
                 version_end_str=config.version_end,
                 table_separator=config.archive_document.table_separator,
-                introduce_version_column_index=config.archive_document.introduce_version_column_index,
-                archived_version_column_index=config.archive_document.archived_version_column_index,
+                raw_line_pickers=config.archive_document.raw_line_pickers,
                 match_introduce_version=config.match_introduce_version
             )
         )
+        target_lines = archive_document.reformat_lines(
+            lines=target_lines,
+            table_separator=config.archive_document.table_separator,
+            raw_line_pickers=config.archive_document.raw_line_pickers,
+            reformat_template=config.archive_document.reformat_template
+        )
+        target_lines = archive_document.add_brake_line(target_lines)
     print(Log.match_much_archive_content
           .format(
               count=len(archive_document.show_lines())

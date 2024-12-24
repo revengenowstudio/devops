@@ -1,28 +1,7 @@
 from dataclasses import dataclass, field
-from typing import TypedDict, TypeAlias
+from typing import TypeAlias
 
 IssueType: TypeAlias = str
-
-
-class ArchivedIssuesInfoJson(TypedDict):
-    url: str
-    json_api: bool
-    content_key: str
-    base64_decode: bool
-    use_token: bool
-    http_headers: dict[str, str]
-
-
-class ArchivedDocumentJson(TypedDict):
-    skip_header_rows: int
-    table_separator: str
-    skip_header_rows: int
-
-
-class ConfigJson(TypedDict):
-    archived_issues_info: list[ArchivedIssuesInfoJson]
-    archive_document: ArchivedDocumentJson
-    output_path: str
 
 
 @dataclass
@@ -38,11 +17,19 @@ class Config():
             default_factory=dict)
 
     @dataclass
+    class RawLinePicker():
+        column_index: int = 0
+        pick_types: list[str] = field(
+            default_factory=list)
+        regex: str | None = None
+
+    @dataclass
     class ArchivedDocument():
         skip_header_rows: int = 0
         table_separator: str = str()
-        introduce_version_column_index: int = 0
-        archived_version_column_index: int = 0
+        reformat_template: str = str()
+        raw_line_pickers: list['Config.RawLinePicker'] = field(
+            default_factory=list)
 
     # 从env读取
     # repository_token: str = str()
