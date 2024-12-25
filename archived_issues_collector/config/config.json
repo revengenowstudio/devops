@@ -1,0 +1,53 @@
+{
+    "archived_issues_info": [
+        {
+            "url": "https://raw.githubusercontent.com/revengenowstudio/rn_issues_auto_archiving/refs/heads/main/%E4%BF%AE%E6%94%B9%E5%BD%92%E6%A1%A3.md",
+            "json_api": false,
+            "content_key": "content",
+            "base64_decode": false,
+            "use_token": false,
+            "http_headers": {
+                "Accept": "application/vnd.github.raw+json"
+            }
+        }
+    ],
+    "archive_document": {
+        "skip_header_rows": 5,
+        "table_separator": "|",
+        "reformat_template": "1. [{issue_type}({md_link_square_start}{issue_location}{md_link_square_end}{issue_url_parents})]  {issue_title}",
+        "raw_line_pickers": [
+            {
+                "column_index": 0,
+                "pick_types": [
+                    "first_number"
+                ],
+                "regex": null
+            },
+            {
+                "column_index": 1,
+                "pick_types": [
+                    "issue_type",
+                    "issue_title",
+                    "issue_location",
+                    "issue_url"
+                ],
+                "regex": "\\((.*?)\\)(.*)\\[(.*?)\\]{1}\\(?(.+(?=\\)))?"
+            },
+            {
+                "column_index": 2,
+                "pick_types": [
+                    "introduce_version"
+                ],
+                "regex": null
+            },
+            {
+                "column_index": 3,
+                "pick_types": [
+                    "archived_version"
+                ],
+                "regex": null
+            }
+        ]
+    },
+    "output_path": "./output/artifact.md"
+}
