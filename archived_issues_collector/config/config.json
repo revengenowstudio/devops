@@ -49,5 +49,5 @@
             }
         ]
     },
-    "output_path": "./output/artifact.md"
+    "output_path": "./output/ChangeLog.md"
 }

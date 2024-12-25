@@ -41,6 +41,6 @@ jobs:
       - name: Upload file to artifact 
         uses: actions/upload-artifact@v4
         with:
-          name: ChangeLog.md
-          path: ./output/artifact.md
+          name: ChangeLog
+          path: ./output/ChangeLog.md
           retention-days: 30
