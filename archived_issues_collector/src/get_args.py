@@ -28,7 +28,7 @@ def get_value_from_args_or_default(short_arg: str,
     '''如果找不到对应的命令行参数，返回空字符串'''
     result = ""
     try:
-        get_value_from_args(short_arg, long_arg)
+        result = get_value_from_args(short_arg, long_arg)
     except ValueError:
         pass
     return result

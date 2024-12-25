@@ -1,8 +1,10 @@
 import re
 from dataclasses import dataclass
+from pathlib import Path
 from typing import TypedDict
 
-from exception import PickerNotFoundError, ErrorMessage
+from exception import (PickerNotFoundError, ErrorMessage,
+                       ReformatLineError, SearchLineError)
 from log import Log
 from version_code import VersionCode
 from json_config import Config
@@ -29,27 +31,48 @@ class IssueInfo(TypedDict):
 
 class ArchiveDocument():
 
+    @property
+    def new_line_length(self) -> int:
+        return len(self.__new_line)
+
     def __init__(self):
         self.__lines: list[str] = []
+        self.__new_line: list[str] = []
 
     def __split_line(self,
                      line: str,
                      table_separator: str
                      ) -> list[str]:
-        return [i for i in line.split(table_separator)
-                if i.strip()]
+        result = [i for i in line.split(table_separator)
+                  if i.strip()]
+        if len(result) == 1:
+            raise ValueError(
+                ErrorMessage.incorrect_line_format
+                .format(
+                    table_separator=table_separator
+                )
+            )
+        return result
 
     def __apply_single_picker(
         self,
         column: list[str],
         picker: Config.RawLinePicker
     ) -> list[str]:
-        if picker.regex is None:
-            return [column[picker.column_index]]
-        return re.findall(
-            picker.regex,
-            column[picker.column_index]
-        )
+        try:
+            if picker.regex is None:
+                return [column[picker.column_index]]
+            return re.findall(
+                picker.regex,
+                column[picker.column_index]
+            )
+        except IndexError:
+            raise IndexError(
+                ErrorMessage.column_index_out_of_range
+                .format(
+                    picker=picker
+                ),
+            )
 
     def __apply_all_picker(
         self,
@@ -58,19 +81,26 @@ class ArchiveDocument():
     ) -> IssueInfo:
         result = {}
         for picker in pickers:
-            if picker.regex is None:
-                result[picker.pick_types[0]] = column[picker.column_index]
-            else:
-                for pick_types, value in zip(
-                    picker.pick_types,
-                    re.findall(
-                        picker.regex,
-                        column[picker.column_index]
-                    )[0]
-                ):
-                    value: str
-                    result[pick_types] = value.strip()
-
+            try:
+                if picker.regex is None:
+                    result[picker.pick_types[0]] = column[picker.column_index]
+                else:
+                    for pick_types, value in zip(
+                        picker.pick_types,
+                        re.findall(
+                            picker.regex,
+                            column[picker.column_index]
+                        )[0]
+                    ):
+                        value: str
+                        result[pick_types] = value.strip()
+            except IndexError:
+                raise IndexError(
+                    ErrorMessage.column_index_out_of_range
+                    .format(
+                        picker=picker
+                    )
+                )
         if result.get("issue_url") is None:
             result["issue_url"] = ""
         return IssueInfo(**result)
@@ -104,69 +134,112 @@ class ArchiveDocument():
         table_separator: str,
         raw_line_pickers: list[Config.RawLinePicker],
         match_introduce_version: bool,
-    ) -> list[str]:
+    ) -> None:
         all_lines = self.__lines
         version_start = VersionCode(version_start_str)
         version_end = VersionCode(version_end_str)
         result: list[str] = []
-        for line in all_lines:
-            column = self.__split_line(line, table_separator)
-            archived_version = VersionCode(
-                self.__apply_single_picker(
-                    column,
-                    self.__select_picker(
-                        PickerType.archived_version,
-                        raw_line_pickers
-                    )
-                )[0]
-            )
-            version_matched = version_start <= archived_version <= version_end
-
-            if (not version_matched
-                    and match_introduce_version):
-                introduce_version = VersionCode(
+        for line_index, line in enumerate(all_lines):
+            try:
+                column = self.__split_line(line, table_separator)
+                archived_version = VersionCode(
                     self.__apply_single_picker(
                         column,
                         self.__select_picker(
-                            PickerType.introduce_version,
+                            PickerType.archived_version,
                             raw_line_pickers
                         )
                     )[0]
                 )
-                version_matched = version_start <= introduce_version <= version_end
+                version_matched = version_start <= archived_version <= version_end
 
-            if version_matched:
-                result.append(line)
+                if (not version_matched
+                        and match_introduce_version):
+                    introduce_version = VersionCode(
+                        self.__apply_single_picker(
+                            column,
+                            self.__select_picker(
+                                PickerType.introduce_version,
+                                raw_line_pickers
+                            )
+                        )[0]
+                    )
+                    version_matched = version_start <= introduce_version <= version_end
 
-        return result
+                if version_matched:
+                    result.append(line)
+
+            except Exception as exc:
+                print(
+                    ErrorMessage.error_in_search_lines
+                    .format(
+                        line_index=line_index + 1,
+                        line=line,
+                        exc=exc
+                    )
+                )
+
+        self.__new_line = result
 
     def reformat_lines(
         self,
-        lines: list[str],
         table_separator: str,
         raw_line_pickers: list[Config.RawLinePicker],
         reformat_template: str
-    ) -> list[str]:
-        raw_lines = lines
+    ) -> None:
+        raw_lines = self.__new_line
         reformat_lines: list[str] = []
         for line in raw_lines:
-            column = self.__split_line(line, table_separator)
-            issue_info = self.__apply_all_picker(column, raw_line_pickers)
-            issue_url_parents = issue_info["issue_url"]
-            if issue_info["issue_url"] != "":
-                issue_url_parents = f'({issue_url_parents})'
+            try:
+                column = self.__split_line(line, table_separator)
+                issue_info = self.__apply_all_picker(column, raw_line_pickers)
+                issue_url_parents = issue_info["issue_url"]
+                md_link_square_start = ""
+                md_link_square_end = ""
+                if issue_info["issue_url"] != "":
+                    issue_url_parents = f'({issue_url_parents})'
+                    md_link_square_start = '['
+                    md_link_square_end = ']'
 
-            reformat_lines.append(
-                reformat_template.format(
-                    issue_url_parents=issue_url_parents,
-                    **issue_info
+                reformat_lines.append(
+                    reformat_template.format(
+                        md_link_square_start=md_link_square_start,
+                        md_link_square_end=md_link_square_end,
+                        issue_url_parents=issue_url_parents,
+                        **issue_info
+                    )
                 )
-            )
-        return reformat_lines
+            except Exception as exc:
+                print(
+                    ErrorMessage.reformat_line_error
+                    .format(
+                        line=line,
+                        exc=exc
+                    )
+                )
+        self.__new_line = reformat_lines
 
-    def add_brake_line(self, lines: list[str]) -> list[str]:
-        return [i if i.endswith("\n") else i + "\n"
-                for i in lines]
+    def add_brake_line(self) -> None:
+        self.__new_line = [
+            i if i.endswith("\n") else i + "\n"
+            for i in self.__new_line
+        ]
+
+    def write_line_file(self,
+                        output_path_str: str) -> None:
+        new_line = self.__new_line
+        output_path = Path(output_path_str)
+        print(Log.write_content_to
+              .format(path=output_path))
+        try:
+            output_path.parent.mkdir(parents=True, exist_ok=True)
+            with open(output_path, "w", encoding="utf-8") as file:
+                file.writelines(new_line)
+        except Exception as exc:
+            print(ErrorMessage.write_file_error
+                  .format(exc=exc))
+        print(Log.write_content_success
+              .format(path=output_path))
 
     def show_lines(self) -> list[str]:
         return self.__lines.copy()

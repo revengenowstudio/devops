@@ -62,7 +62,8 @@ class VersionCode():
                  special_version: bool = False
                  ) -> None:
         self.__raw: str = raw_version
-        if special_version:
+        if (special_version
+            or raw_version == ""):
             self.__version_type = VersionType.special
         else:
             self.__version_type = self.__check_version_type(raw_version)

@@ -25,8 +25,13 @@ def http_request(
                 json=json_content,
                 follow_redirects=True,
             )
-            if response.status_code == HTTPStatus.NOT_FOUND:
-                print(Log.http_404_not_found)
+            match response.status_code:
+                case HTTPStatus.NOT_FOUND:
+                    print(Log.http_404_not_found
+                          .format(url=url))
+                case HTTPStatus.UNAUTHORIZED:
+                    print(Log.http_401_unauthorized
+                          .format(url=url))
             response.raise_for_status()
             return response
         except httpx.HTTPStatusError:

@@ -1,5 +1,3 @@
-from pathlib import Path
-
 from archive_document import ArchiveDocument
 from json_config import Config
 from config_data_source import JsonConfigDataSource, ArgsConfigDataSource
@@ -30,32 +28,49 @@ def main():
         config.repository_token
     )
     document_content_list: list[str] = []
-    print(
-        Log.getting_something_from
-        .format(
-            another=Log.archived_source,
-            something=Log.archived_content
-        ))
-    for archived_issues_info in config.archived_issues_info:
-        archived_issues_info.use_token
-        document_content: str = archive_document_collector.collect_document(
-            url=archived_issues_info.url,
-            content_key=archived_issues_info.content_key,
-            http_headers=archived_issues_info.http_headers,
-            json_api=archived_issues_info.json_api,
-            base64_decode=archived_issues_info.base64_decode,
-            use_token=archived_issues_info.use_token,
-        )
-        document_content_list.append(document_content)
-    print(
-        Log.getting_something_from_success
-        .format(
-            another=Log.archived_source,
-            something=Log.archived_content
-        ))
 
-    # 查找符合版本号范围的内容
-    target_lines: list[str] = []
+    for index, archived_issues_info in enumerate(config.archived_issues_info):
+        index_ = index + 1
+        try:
+            print(
+                Log.getting_something_from
+                .format(
+                    another=Log.archived_source
+                    .format(index=index_),
+                    something=Log.archived_content
+                ))
+            document_content: str = archive_document_collector.collect_document(
+                url=archived_issues_info.url,
+                content_key=archived_issues_info.content_key,
+                http_headers=archived_issues_info.http_headers,
+                json_api=archived_issues_info.json_api,
+                base64_decode=archived_issues_info.base64_decode,
+                use_token=archived_issues_info.use_token,
+            )
+            document_content_list.append(document_content)
+            print(
+                Log.getting_something_from_success
+                .format(
+                    another=Log.archived_source
+                    .format(index=index_),
+                    something=Log.archived_content
+                ))
+        except Exception as exc:
+            print(
+                ErrorMessage.collect_document_error
+                .format(
+                    index=index_,
+                    exc=str(exc)
+                )
+            )
+    print(
+        Log.collect_document_success_number
+        .format(
+            number=len(document_content_list)
+        )
+    )
+
+    # 查找符合版本号范围的内容,并将内容重新格式化
     print(Log.match_archive_content_in_version_range)
     for document_content in document_content_list:
         archive_document = ArchiveDocument()
@@ -63,35 +78,27 @@ def main():
             document_content,
             config.archive_document.skip_header_rows
         )
-        target_lines.extend(
-            archive_document.search_line_in_version_range(
-                version_start_str=config.version_start,
-                version_end_str=config.version_end,
-                table_separator=config.archive_document.table_separator,
-                raw_line_pickers=config.archive_document.raw_line_pickers,
-                match_introduce_version=config.match_introduce_version
-            )
+        archive_document.search_line_in_version_range(
+            version_start_str=config.version_start,
+            version_end_str=config.version_end,
+            table_separator=config.archive_document.table_separator,
+            raw_line_pickers=config.archive_document.raw_line_pickers,
+            match_introduce_version=config.match_introduce_version
         )
-        target_lines = archive_document.reformat_lines(
-            lines=target_lines,
+        archive_document.reformat_lines(
             table_separator=config.archive_document.table_separator,
             raw_line_pickers=config.archive_document.raw_line_pickers,
             reformat_template=config.archive_document.reformat_template
         )
-        target_lines = archive_document.add_brake_line(target_lines)
+        archive_document.add_brake_line()
+
     print(Log.match_much_archive_content
           .format(
-              count=len(archive_document.show_lines())
+              count=archive_document.new_line_length
           ))
 
     # 将结果写入文件中
-
-    output_path = Path(config.output_path)
-    print(Log.write_content_to
-          .format(path=output_path))
-    output_path.parent.mkdir(parents=True, exist_ok=True)
-    with open(output_path, "w", encoding="utf-8") as file:
-        file.writelines(target_lines)
+    archive_document.write_line_file(config.output_path)
 
     print(Log.job_done)
 
