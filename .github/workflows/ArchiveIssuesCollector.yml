@@ -38,9 +38,9 @@ jobs:
         run: |
           python ./archived_issues_collector/src/main.py --config ./archived_issues_collector/config/config.json --version-start ${{ inputs.version_start }} --version-end ${{ inputs.version_end }} --match-introduce-version ${{ inputs.match_introduce_version }}
 
-      - name: Upload aircraft file
-        uses: actions/upload-artifact@v3
+      - name: Upload file to artifact 
+        uses: actions/upload-artifact@v4
         with:
-          name: aircraft-file
-          path: ./output/aircraft.md
+          name: ChangeLog.md
+          path: ./output/artifact.md
           retention-days: 30
