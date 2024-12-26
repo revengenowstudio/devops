@@ -1,7 +1,8 @@
-
+import os
 import json
 from pathlib import Path
 
+from env import Env
 from log import Log
 from data_source import DataSource
 from json_config import Config
@@ -60,6 +61,17 @@ class ArgsConfigDataSource(DataSource):
               .format(
                   match_introduce_version=config.match_introduce_version
               ))
+
+
+class EnvConfigDataSource(DataSource):
+    def load(
+            self,
+            config: Config
+    ) -> None:
+        if config.repository_token == "":
+            config.repository_token = os.environ.get(Env.REPOSITORY_TOKEN, "")
+            if config.repository_token == "":
+                print(Log.repository_token_not_found)
 
 
 class JsonConfigDataSource(DataSource):

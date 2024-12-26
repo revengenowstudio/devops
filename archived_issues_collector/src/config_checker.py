@@ -5,11 +5,11 @@ from json_dumps import json_dumps
 
 
 class ConfigChecker():
-    _registered_functions = []
+    _registered_functions = set()
 
     @staticmethod
     def register(func: Callable[[dict[str, str]], None]):
-        ConfigChecker._registered_functions.append(func)
+        ConfigChecker._registered_functions.add(func)
         return func
 
     @staticmethod
