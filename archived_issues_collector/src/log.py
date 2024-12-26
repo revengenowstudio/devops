@@ -4,7 +4,6 @@ class Log():
     archived_content = '''归档文件内容'''
     version_start = '''起始版本号'''
     version_end = '''结束版本号'''
-    
 
     getting_something = '''获取 {something} 中'''
     getting_something_from = '''正在从 {another} 中获取 {something}'''
@@ -22,9 +21,46 @@ class Log():
     http_status_error = '''HTTP请求返回状态码错误 , 原因：{reason}'''
     collect_document_success_number = '''总共成功获取到了{number}份归档文件'''
     repository_token_not_found = '''未在命令行参数以及环境变量中读取到Token'''
-    
+
     job_done = '''脚本执行完毕'''
 
     loading_something_success = '''加载 {something} 完毕'''
     getting_something_from_success = '''成功从 {another} 中获取 {something}'''
     write_content_success = '''成功将匹配到的内容写入到 {path}'''
+
+    help_message = '''
+    ---命令行参数帮助--- \n
+    * -c --config 
+    必填                   
+    类型 : 字符串
+    描述 : 配置文件路径
+
+    * -vs --version-start 
+    必填           
+    类型 : 字符串
+    描述 : 起始(最小)版本号,用于筛选出特定的归档内容
+
+    * -ve --version-end 
+    必填             
+    类型 : 字符串
+    描述 : 结束(最大)版本号,用于筛选出特定的归档内容
+
+    -t --repository-token    
+    选填        
+    类型 : 字符串
+    描述: A ccess token,若填写则请求归档文件时会携带此token
+
+    -miv --match-introduce-version   
+    选填
+    类型 : 字符串
+    描述 : 筛选归档内容时是否匹配引入版本号,默认为否,使用时需要再后面添加true
+
+
+    示例 :
+    python main.py                       \\
+    --config "./config/config.json"      \\
+    --version-start "0.99.918"            \\
+    --version-end "0.99.918"              \\
+    --repository-token "test_token"       \\  
+    --match-introduce-version true        \\
+    '''

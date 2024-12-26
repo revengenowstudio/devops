@@ -10,7 +10,7 @@ def get_value_from_args(short_arg: str,
     result = None
     if (long_arg in argv):
         result = argv[argv.index(long_arg) + 1]
-    if (short_arg in argv != -1):
+    if (short_arg in argv):
         result = argv[argv.index(short_arg) + 1]
 
     if result is None:
@@ -21,6 +21,15 @@ def get_value_from_args(short_arg: str,
                     )
         )
     return result
+
+def should_args_exist(short_arg: str,
+                        long_arg: str) -> bool:
+    argv = sys.argv
+    if (long_arg in argv):
+        return True
+    if (short_arg in argv):
+        return True
+    return False
 
 
 def get_value_from_args_or_default(short_arg: str,

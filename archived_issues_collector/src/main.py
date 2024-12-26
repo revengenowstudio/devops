@@ -1,16 +1,26 @@
+import sys
 from archive_document import ArchiveDocument
 from json_config import Config
 from config_data_source import (JsonConfigDataSource, 
                                 ArgsConfigDataSource,
                                 EnvConfigDataSource)
 from archive_document_collector import ArchiveDocumentCollector
+from get_args import should_args_exist
 from log import Log
 from version_code import VersionCode
 from exception import *
 
 
-def main():
 
+def main():
+    
+    if (should_args_exist(
+        short_arg="--help",
+        long_arg="-h"
+    ) or len(sys.argv) == 1):
+        print(Log.help_message)
+        exit(0)
+    
     # 从各种地方读配置文件和输入内容
     config = Config()
     ArgsConfigDataSource().load(config)
