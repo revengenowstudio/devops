@@ -4,7 +4,6 @@ from http import HTTPStatus
 
 import httpx
 
-from src.log import Log
 from src.http_request import http_request
 
 
