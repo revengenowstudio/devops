@@ -1,0 +1,28 @@
+name: "Unit test"
+run-name: "Unit test"
+
+on:
+  push:
+    paths: 
+    - 'archived_issues_collector/**/*.py'
+
+jobs:
+  auto_archiving:
+    name: "Run unit test"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python and install dependencies
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+          cache: 'pip' # caching pip dependencies
+      - run: |
+          pip install -r ./archived_issues_collector/requirements.txt
+          pip install pytest
+        
+      - name: Run unit test
+        run: |
+          pytest

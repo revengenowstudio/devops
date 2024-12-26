@@ -1,5 +1,6 @@
 import pytest
-from src.version_code import VersionCode, VersionType
+
+from src.version_code import VersionCode
 
 
 class TestVersionCode:

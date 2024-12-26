@@ -1,6 +1,8 @@
 from archive_document import ArchiveDocument
 from json_config import Config
-from config_data_source import JsonConfigDataSource, ArgsConfigDataSource
+from config_data_source import (JsonConfigDataSource, 
+                                ArgsConfigDataSource,
+                                EnvConfigDataSource)
 from archive_document_collector import ArchiveDocumentCollector
 from log import Log
 from version_code import VersionCode
@@ -12,6 +14,7 @@ def main():
     # 从各种地方读配置文件和输入内容
     config = Config()
     ArgsConfigDataSource().load(config)
+    EnvConfigDataSource().load(config)
     JsonConfigDataSource(config.config_path).load(config)
 
     # 版本号是否合法

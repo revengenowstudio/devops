@@ -21,6 +21,7 @@ class Log():
     http_401_unauthorized = '''没有权限请求对应url , 请检查token是否正确配置以及token拥有正确的权限 , 请求失败的url为 : {url}'''
     http_status_error = '''HTTP请求返回状态码错误 , 原因：{reason}'''
     collect_document_success_number = '''总共成功获取到了{number}份归档文件'''
+    repository_token_not_found = '''未在命令行参数以及环境变量中读取到Token'''
     
     job_done = '''脚本执行完毕'''
 
