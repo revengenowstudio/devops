@@ -1,8 +1,8 @@
-import pytest
 from unittest.mock import patch, MagicMock
 from http import HTTPStatus
 
 import httpx
+import pytest
 
 from src.http_request import http_request
 

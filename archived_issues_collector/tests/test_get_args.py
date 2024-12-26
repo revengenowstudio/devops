@@ -1,5 +1,6 @@
-import pytest
 from unittest.mock import patch
+
+import pytest
 
 from src.get_args import (get_value_from_args,
                           get_value_from_args_or_default)

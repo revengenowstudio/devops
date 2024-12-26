@@ -1,8 +1,9 @@
 import sys
 import os
+from unittest.mock import patch
 
 import pytest
-from unittest.mock import patch
+
 
 # sys.path.insert(
 #     0, os.path.abspath(
