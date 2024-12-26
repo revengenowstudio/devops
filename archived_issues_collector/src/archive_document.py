@@ -1,7 +1,7 @@
 import re
 from dataclasses import dataclass
 from pathlib import Path
-from typing import TypedDict
+from typing import Any, TypedDict
 
 from exception import (PickerNotFoundError, ErrorMessage,
                        ReformatLineError, SearchLineError)
@@ -29,15 +29,23 @@ class IssueInfo(TypedDict):
     archived_version: str
 
 
+def extent_double_list(input: list[list[Any]]) -> list[Any]:
+    result = []
+    for deep_list in input:
+        for item in deep_list:
+            result.append(item)
+    return result
+
+
 class ArchiveDocument():
 
     @property
     def new_line_length(self) -> int:
-        return len(self.__new_line)
+        return len(self.__new_lines)
 
     def __init__(self):
         self.__lines: list[str] = []
-        self.__new_line: list[str] = []
+        self.__new_lines: list[str] = []
 
     def __split_line(self,
                      line: str,
@@ -62,14 +70,19 @@ class ArchiveDocument():
         try:
             if picker.regex is None:
                 return [column[picker.column_index]]
-            return re.findall(
+            result = re.findall(
                 picker.regex,
                 column[picker.column_index]
             )
+            if all([isinstance(i, tuple) for i in result]):
+                return extent_double_list(result)
+            return result
         except IndexError:
             raise IndexError(
                 ErrorMessage.column_index_out_of_range
                 .format(
+                    column_number=len(column),
+                    column_index=picker.column_index,
                     picker=picker
                 ),
             )
@@ -85,12 +98,15 @@ class ArchiveDocument():
                 if picker.regex is None:
                     result[picker.pick_types[0]] = column[picker.column_index]
                 else:
+                    findall_result = re.findall(
+                        picker.regex,
+                        column[picker.column_index]
+                    )
+                    if all([isinstance(i, tuple) for i in findall_result]):
+                        findall_result = extent_double_list(findall_result)
                     for pick_types, value in zip(
                         picker.pick_types,
-                        re.findall(
-                            picker.regex,
-                            column[picker.column_index]
-                        )[0]
+                        findall_result
                     ):
                         value: str
                         result[pick_types] = value.strip()
@@ -98,6 +114,8 @@ class ArchiveDocument():
                 raise IndexError(
                     ErrorMessage.column_index_out_of_range
                     .format(
+                        column_number=len(column),
+                        column_index=picker.column_index,
                         picker=picker
                     )
                 )
@@ -179,7 +197,7 @@ class ArchiveDocument():
                     )
                 )
 
-        self.__new_line = result
+        self.__new_lines = result
 
     def reformat_lines(
         self,
@@ -187,7 +205,7 @@ class ArchiveDocument():
         raw_line_pickers: list[Config.RawLinePicker],
         reformat_template: str
     ) -> None:
-        raw_lines = self.__new_line
+        raw_lines = self.__new_lines
         reformat_lines: list[str] = []
         for line in raw_lines:
             try:
@@ -217,17 +235,17 @@ class ArchiveDocument():
                         exc=exc
                     )
                 )
-        self.__new_line = reformat_lines
+        self.__new_lines = reformat_lines
 
     def add_brake_line(self) -> None:
-        self.__new_line = [
+        self.__new_lines = [
             i if i.endswith("\n") else i + "\n"
-            for i in self.__new_line
+            for i in self.__new_lines
         ]
 
     def write_line_file(self,
                         output_path_str: str) -> None:
-        new_line = self.__new_line
+        new_line = self.__new_lines
         output_path = Path(output_path_str)
         print(Log.write_content_to
               .format(path=output_path))
@@ -244,6 +262,9 @@ class ArchiveDocument():
     def show_lines(self) -> list[str]:
         return self.__lines.copy()
 
+    def show_new_lines(self) -> list[str]:
+        return self.__new_lines.copy()
+
     def add_new_line(self, line: str) -> None:
         '''不建议直接使用此方法'''
-        self.__lines.append(line)
+        self.__new_lines.append(line)
