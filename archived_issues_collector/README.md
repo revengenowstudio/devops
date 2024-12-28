@@ -2,7 +2,7 @@
 
 - 此项目用于收集各个**归档文件**并根据**指定的版本号范围**来**汇总归档内容并重新格式化输出**为ChangeLog形式的内容
 - 本项目的预期设计触发条件是通过github action流水线手动触发来运行,详见 [ChangeLog输出流水线使用指南](./ChangeLog输出流水线使用指南.md)
-- 本项目还支持通过命令行参数传入版本号范围以及配置文件路径来本地运行
+- 本项目还支持通过命令行参数传入版本号范围以及配置文件路径来本地运行,详见[本地运行项目](#本地运行项目)
 - 运行项目需要python解释器版本 >= `3.10`
 
 ## 配置文件变量
@@ -11,7 +11,7 @@
 
 | 变量名                                           | 类型                | 默认值 | 描述                                                                                                                                                                                                                            |
 | ------------------------------------------------ | ------------------- | ------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| archived_issues_info                             | list[dict[str,Any]] | []     | 定义归档文件源获取规则,目前只支持http和https源                                                                                                                                                                                  |
+| archived_issues_info                             | list[dict[str,Any]] | []     | 定义归档文件源获取规则,目前只支持http和https源,配置时请参考[归档文件url配置说明](#归档文件url配置说明)                                                                                                                                                                                  |
 | archived_issues_info[].url                       | str                 | ""     | 归档文件源的url                                                                                                                                                                                                                 |
 | archived_issues_info[].json_api                  | bool                | false  | 请求的url是否是json api,若此值为true,请求url后响应的内容将以json格式解析                                                                                                                                                        |
 | archived_issues_info[].content_key               | str                 | ""     | 实际归档内容在json响应中的键名,`json_api`值为true时才生效,与`json_api`配合使用                                                                                                                                                  |
@@ -30,6 +30,33 @@
 ## 流水线所需仓库机密或变量
 - 仓库机密
   - `REPOSITORY_TOKEN` : 需要所有目标仓库的`Content`的`读取`权限
+
+## 归档文件url配置说明
+
+### github
+- 目前发现可以有两种填写方式可以满足拉取归档文件的需求
+  - 通过 Restful API 来获取内容
+    - 详见 [存储库内容的 REST API 终结点 - Get repository content](https://docs.github.com/zh/rest/repos/contents?apiVersion=2022-11-28#get-repository-content)
+    - url 样例 : `https://api.github.com/repos/<owner>/<repo>/contents/<path>` 
+    - 可以通过控制Http Header中的`Accept`的值来控制返回内容的格式
+      - `application/vnd.github.raw+json` 则返回整个文件原内容,此种方式支持文件内容大小为**1MB**至**100MB**的文件
+      - `application/vnd.github.object+json` 则返回json对象 , json对象也包含了经过base64编码的文件内容,位于`content`字段中,此种方式只支持文件内容大小为**1MB**的文件
+
+  - 通过 raw.githubusercontent.com 获取内容
+    - url 样例 : `https://raw.githubusercontent.com/<owner>/<repo>/refs/heads/<branch>/<path>` 
+    - 此方式支持任意大小的文件,但是在本地运行时没有特殊手段则无法访问
+    - 当仓库为`private`状态,使用时需要在添加query params(请求参数)`token`,这里的token是由github网页临时生成的,有效期很短且不支持用户的access token来鉴权
+
+### gitlab
+- 暂未编写
+
+
+## 本地运行项目
+
+- 直接运行`main.py`或者使用`-h` `--help`查看命令参数帮助信息
+```bash
+python ./archived_issues_collector/src/main.py 
+```
 
 
 ## 项目结构

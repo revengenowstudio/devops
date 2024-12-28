@@ -17,7 +17,7 @@ on:
         
 
 env:
-  REPOSITORY_TOKEN: ${{ secrets.REPOSITORY_TOKEN }}
+  REPOSITORY_TOKEN: ${{ secrets.RN_BOT_TOKEN }}
 
 jobs:
   archive-issues-collector:
@@ -43,4 +43,4 @@ jobs:
         with:
           name: ChangeLog
           path: ./output/ChangeLog.md
-          retention-days: 30
+          retention-days: 90
