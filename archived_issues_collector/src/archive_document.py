@@ -256,7 +256,7 @@ class ArchiveDocument():
               .format(path=output_path))
         try:
             output_path.parent.mkdir(parents=True, exist_ok=True)
-            with open(output_path, "w", encoding="utf-8") as file:
+            with open(output_path, "a", encoding="utf-8") as file:
                 file.writelines(new_line)
         except Exception as exc:
             print(ErrorMessage.write_file_error

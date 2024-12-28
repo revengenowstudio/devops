@@ -1,7 +1,7 @@
 import sys
 from archive_document import ArchiveDocument
 from json_config import Config
-from config_data_source import (JsonConfigDataSource, 
+from config_data_source import (JsonConfigDataSource,
                                 ArgsConfigDataSource,
                                 EnvConfigDataSource)
 from archive_document_collector import ArchiveDocumentCollector
@@ -11,16 +11,15 @@ from version_code import VersionCode
 from exception import *
 
 
-
 def main():
-    
+
     if (should_args_exist(
         short_arg="--help",
         long_arg="-h"
     ) or len(sys.argv) == 1):
         print(Log.help_message)
         exit(0)
-    
+
     # 从各种地方读配置文件和输入内容
     config = Config()
     ArgsConfigDataSource().load(config)
@@ -98,20 +97,19 @@ def main():
             raw_line_pickers=config.archive_document.raw_line_pickers,
             match_introduce_version=config.match_introduce_version
         )
-    archive_document.reformat_lines(
-        table_separator=config.archive_document.table_separator,
-        raw_line_pickers=config.archive_document.raw_line_pickers,
-        reformat_template=config.archive_document.reformat_template
-    )
-    archive_document.add_brake_line()
+        print(Log.match_much_archive_content
+              .format(
+                  count=archive_document.new_line_length
+              ))
+        archive_document.reformat_lines(
+            table_separator=config.archive_document.table_separator,
+            raw_line_pickers=config.archive_document.raw_line_pickers,
+            reformat_template=config.archive_document.reformat_template
+        )
+        archive_document.add_brake_line()
 
-    print(Log.match_much_archive_content
-          .format(
-              count=archive_document.new_line_length
-          ))
-
-    # 将结果写入文件中
-    archive_document.write_line_file(config.output_path)
+        # 将结果写入文件中
+        archive_document.write_line_file(config.output_path)
 
     print(Log.job_done)
 
