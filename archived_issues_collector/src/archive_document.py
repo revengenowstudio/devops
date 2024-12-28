@@ -51,8 +51,13 @@ class ArchiveDocument():
                      line: str,
                      table_separator: str
                      ) -> list[str]:
-        result = [i for i in line.split(table_separator)
-                  if i.strip()]
+        result = []
+        for index, item in enumerate(line.split(table_separator)):
+            if ((index == 0
+                 or index == (len(line.split(table_separator))-1))
+                    and item.strip() == ""):
+                continue
+            result.append(item.strip())
         if len(result) == 1:
             raise ValueError(
                 ErrorMessage.incorrect_line_format

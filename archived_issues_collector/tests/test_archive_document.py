@@ -58,9 +58,10 @@ class TestArchiveDocument():
         table_separator = '|'
         version_start_str = "0.99.918"
         version_end_str = "0.99.920"
-        line1 = "|3   |(Bug修复)修复了在攻城拔寨模式中，科技防空堡垒只能对正前方开火 [外部Issue#103] |0.99.915| 0.99.919|"
-        line2 = "|4   |(Bug修复)调整了恐怖机器人的攻击射程 [外部Issue#105]  |0.99.919  | 0.99.921|"
-        raw_content = f'{line1}\njidoqj|iaohdoqweq\n{line2}'
+        line1 = "|3|(Bug修复)修复了在攻城拔寨模式中，科技防空堡垒只能对正前方开火 [外部Issue#103] |0.99.915|0.99.919|"
+        line2 = "|4|(Bug修复)调整了恐怖机器人的攻击射程 [外部Issue#105]  |0.99.919  | 0.99.921|"
+        line3 = "|7|(设定调整)英国圣骑士机甲无人操控时不能被神经毒气影响  [外部Issue#831](https://example.com) ||0.99.919|"
+        raw_content = f'{line1}\njidoqj|iaohdoqweq\n{line2}\n{line3}\n'
 
         archive_document.loads(
             raw_content=raw_content,
@@ -75,6 +76,8 @@ class TestArchiveDocument():
         )
         assert (archive_document.show_new_lines()[0].strip()
                 == line1)
+        assert (archive_document.show_new_lines()[1].strip()
+                == line3)
 
         archive_document.search_line_in_version_range(
             version_start_str=version_start_str,
