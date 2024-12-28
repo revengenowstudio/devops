@@ -1,4 +1,5 @@
 name: Archive Issues Collector
+run-name: Collect ${{ inputs.version_start }} to ${{ inputs.version_end }}}} Issues
 
 on:
   workflow_dispatch: 
