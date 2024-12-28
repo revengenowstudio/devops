@@ -8,7 +8,7 @@
   - ![1](./image/ChangeLog输出流水线使用指南/step2.png)
 
 > [!NOTE]
-> 流水线输出产物是zip格式的打包的,解压后即可查看ChangeLog文件
+> 流水线输出产物是自动打包成zip格式的,解压后即可查看ChangeLog文件
 
 
 ## 流水线变量定义
