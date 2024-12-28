@@ -84,9 +84,9 @@ def main():
     )
 
     # 查找符合版本号范围的内容,并将内容重新格式化
+    archive_document = ArchiveDocument()
     print(Log.match_archive_content_in_version_range)
     for document_content in document_content_list:
-        archive_document = ArchiveDocument()
         archive_document.loads(
             document_content,
             config.archive_document.skip_header_rows
@@ -98,12 +98,12 @@ def main():
             raw_line_pickers=config.archive_document.raw_line_pickers,
             match_introduce_version=config.match_introduce_version
         )
-        archive_document.reformat_lines(
-            table_separator=config.archive_document.table_separator,
-            raw_line_pickers=config.archive_document.raw_line_pickers,
-            reformat_template=config.archive_document.reformat_template
-        )
-        archive_document.add_brake_line()
+    archive_document.reformat_lines(
+        table_separator=config.archive_document.table_separator,
+        raw_line_pickers=config.archive_document.raw_line_pickers,
+        reformat_template=config.archive_document.reformat_template
+    )
+    archive_document.add_brake_line()
 
     print(Log.match_much_archive_content
           .format(
