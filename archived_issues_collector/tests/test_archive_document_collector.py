@@ -1,4 +1,5 @@
 import json
+from pathlib import Path
 from unittest.mock import MagicMock, patch
 
 import pytest
@@ -11,7 +12,8 @@ class TestArchiveDocumentCollector():
     @patch("httpx.request")
     def test_collect_document(
             self,
-            mock_http_request: MagicMock
+            mock_http_request: MagicMock,
+            tmpdir: Path
     ):
         test_content_key = "test_content_key"
         test_doc_content = "test_data\n"
@@ -56,7 +58,7 @@ class TestArchiveDocumentCollector():
         assert (mock_http_request.call_args.kwargs["headers"]
                 == expected_header)
         assert result == test_doc_content
-        
+
         result = collector.collect_document(
             url=test_url,
             content_key=test_content_key,
@@ -74,8 +76,7 @@ class TestArchiveDocumentCollector():
         assert (mock_http_request.call_args.kwargs["headers"]
                 == expected_header)
         assert result == test_doc_content
-        
-        
+
         result = collector.collect_document(
             url=test_url,
             content_key=test_content_key,
@@ -85,8 +86,7 @@ class TestArchiveDocumentCollector():
             use_token=False,
         )
         assert result == test_doc_json_content[test_content_key]
-        
-        
+
         from base64 import b64encode
         mock_response.text = b64encode(test_doc_content.encode())
         result = collector.collect_document(
@@ -95,7 +95,21 @@ class TestArchiveDocumentCollector():
             http_headers=test_http_headers,
             json_api=False,
             base64_decode=True,
-            
+
+            use_token=False,
+        )
+        assert result == test_doc_content
+
+        test_doc_content = "test\ntest\n\n"
+        tmp_file = tmpdir / "test_file.txt"
+        tmp_file.write_text(test_doc_content, encoding="utf-8")
+        test_url = f"file://{str(tmp_file)}"
+        result = collector.collect_document(
+            url=test_url,
+            content_key=test_content_key,
+            http_headers=test_http_headers,
+            json_api=False,
+            base64_decode=False,
             use_token=False,
         )
         assert result == test_doc_content

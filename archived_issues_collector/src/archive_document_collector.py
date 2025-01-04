@@ -1,3 +1,5 @@
+from pathlib import Path
+
 from base64_decode import base64_decode_str
 
 from http_request import http_request
@@ -24,6 +26,9 @@ class ArchiveDocumentCollector():
         use_token: bool,
     ) -> str:
         result = ""
+
+        if url.startswith("file://"):
+            return Path(url[7:]).read_text(encoding="utf-8")
 
         new_headers = http_headers.copy()
         if use_token:

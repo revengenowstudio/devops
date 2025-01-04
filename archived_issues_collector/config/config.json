@@ -11,24 +11,20 @@
             }
         },
         {
-            "url": "https://api.github.com/repos/revengenowstudio/RN_Internal_Issues/contents/修改归档.md",
+            "url": "file://fetch_file/修改归档.md",
             "json_api": false,
             "content_key": "",
             "base64_decode": false,
             "use_token": true,
-            "http_headers": {
-                "Accept": "application/vnd.github.raw+json"
-            }
+            "http_headers": {}
         },
         {
-            "url": "https://api.github.com/repos/revengenowstudio/RN_Internal_Issues/contents/修改归档_old.md",
+            "url": "file://fetch_file/修改归档_old.md",
             "json_api": false,
             "content_key": "",
             "base64_decode": false,
             "use_token": true,
-            "http_headers": {
-                "Accept": "application/vnd.github.raw+json"
-            }
+            "http_headers": {}
         }
     ],
     "archive_document": {
