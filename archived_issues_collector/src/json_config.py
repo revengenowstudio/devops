@@ -42,6 +42,8 @@ class Config():
     version_start: str = str()
     version_end: str = str()
     match_introduce_version: bool = False
+    include_start_version: bool = True
+    include_end_version: bool = False
 
     # 从配置文件json读取
     archived_issues_info: list[ArchivedIssuesInfo] = field(

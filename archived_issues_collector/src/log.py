@@ -15,6 +15,8 @@ class Log():
     write_content_to = '''正在将匹配到的内容写入到 {path}'''
     input_version_range = '''输入的版本号范围为："{start}" - "{end}"'''
     match_introduce_version = '''是否匹配引入版本号：{match_introduce_version}'''
+    include_start_version = '''是否包含起始版本号：{result}'''
+    include_end_version = '''是否包含结束版本号：{result}'''
     input_version_empty = '''输入的版本号为空'''
     http_404_not_found = '''无法请求到对应url , 请检查输入的url是否正确 , 请求失败的url为 : {url}'''
     http_401_unauthorized = '''没有权限请求对应url , 请检查token是否正确配置以及token拥有正确的权限 , 请求失败的url为 : {url}'''

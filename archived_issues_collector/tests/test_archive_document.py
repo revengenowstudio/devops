@@ -4,6 +4,7 @@ from unittest.mock import patch, MagicMock
 import pytest
 
 from src.archive_document import ArchiveDocument
+from src.version_code import VersionCode
 from src.json_config import Config
 
 
@@ -75,7 +76,9 @@ class TestArchiveDocument():
             version_end_str=version_end_str,
             table_separator=table_separator,
             raw_line_pickers=pickers,
-            match_introduce_version=False
+            match_introduce_version=False,
+            include_start_version=True,
+            include_end_version=True
         )
         assert (archive_document.show_new_lines()[0].strip()
                 == line1)
@@ -89,7 +92,9 @@ class TestArchiveDocument():
             version_end_str=version_end_str,
             table_separator=table_separator,
             raw_line_pickers=pickers,
-            match_introduce_version=True
+            match_introduce_version=True,
+            include_start_version=True,
+            include_end_version=True
         )
         assert (archive_document.show_new_lines()[1].strip()
                 == line2)
@@ -143,6 +148,42 @@ class TestArchiveDocument():
         assert archive_document.show_new_lines()[2].strip() == (
             "[设定引入([内部Issue#414](https://gitlab.revengenow.top/revenge-now/rn_internal_issues/-/issues/414))]  【合作任务】生化合作任务1-无人生还 任务设计与制作"
         )
+
+    @pytest.mark.parametrize(
+        "version_start,version_end,target_version,include_start_version,include_end_version,expected_result",
+        [
+            ("0.99.916", "0.99.918", "0.99.916", False, False, False),
+            ("0.99.916", "0.99.918", "0.99.918", False, False, False),
+            ("0.99.916", "0.99.918", "0.99.917", False, False, True),
+            ("0.99.916", "0.99.918", "0.99.916", True, False, True),
+            ("0.99.916", "0.99.918", "0.99.918", True, False, False),
+            ("0.99.916", "0.99.918", "0.99.917", True, False, True),
+            ("0.99.916", "0.99.918", "0.99.916", False, True, False),
+            ("0.99.916", "0.99.918", "0.99.918", False, True, True),
+            ("0.99.916", "0.99.918", "0.99.917", False, True, True),
+            ("0.99.916", "0.99.918", "0.99.916", True, True, True),
+            ("0.99.916", "0.99.918", "0.99.918", True, True, True),
+            ("0.99.916", "0.99.918", "0.99.917", True, True, True),
+        ]
+    )
+    def test_should_version_in_range(
+        self,
+        archive_document: ArchiveDocument,
+        version_start: str,
+        version_end: str,
+        target_version: str,
+        include_start_version: bool,
+        include_end_version: bool,
+        expected_result: bool
+    ):
+
+        assert archive_document.should_version_in_range(
+            version_start=VersionCode(version_start),
+            version_end=VersionCode(version_end),
+            target_version=VersionCode(target_version),
+            include_start_version=include_start_version,
+            include_end_version=include_end_version
+        ) == expected_result
 
     def test_add_brake_line(
         self,

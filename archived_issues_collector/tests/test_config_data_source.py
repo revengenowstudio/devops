@@ -49,12 +49,14 @@ class TestArgsConfigDataSource():
                 "--repository-token", "test_token",
                 "--version-start", "0.99.918",
                 "--version-end", "0.99.919",
-                "--match-introduce-version", "true"
+                "--match-introduce-version", "true",
+                "--include-start-version", "true",
+                "--include-end-version", "true",
             ],
                 ["config_path", "repository_token", "version_start",
                  "version_end", "match_introduce_version"],
                 ["test.json", "test_token", "0.99.918",
-                 "0.99.919", True],
+                 "0.99.919", True, True, True],
                 None),
         ]
     )
