@@ -51,6 +51,16 @@ class ArgsConfigDataSource(DataSource):
                 "-miv",
                 "--match-introduce-version"
             ))
+        config.include_start_version = str_to_bool(
+            get_value_from_args_or_default(
+                "-isv",
+                "--include-start-version"
+            ))
+        config.include_end_version = str_to_bool(
+            get_value_from_args_or_default(
+                "-iev",
+                "--include-end-version"
+            ))
 
         print(Log.input_version_range
               .format(
@@ -60,6 +70,14 @@ class ArgsConfigDataSource(DataSource):
         print(Log.match_introduce_version
               .format(
                   match_introduce_version=config.match_introduce_version
+              ))
+        print(Log.include_start_version
+              .format(
+                  result=config.include_start_version
+              ))
+        print(Log.include_end_version
+              .format(
+                  result=config.include_end_version
               ))
 
 

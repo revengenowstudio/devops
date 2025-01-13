@@ -4,6 +4,7 @@ from unittest.mock import patch, MagicMock
 import pytest
 
 from src.archive_document import ArchiveDocument
+from src.version_code import VersionCode
 from src.json_config import Config
 
 
@@ -62,7 +63,7 @@ class TestArchiveDocument():
         line2 = "|4|(Bug修复)调整了恐怖机器人的攻击射程 [外部Issue#105]  |0.99.919  | 0.99.921|"
         useless_string = "\njidoqj|iaohdoqweq\n"
         line3 = "|7|(设定调整)英国圣骑士机甲无人操控时不能被神经毒气影响  [外部Issue#831](https://example.com) ||0.99.919|"
-        line4 = "|4|(设定引入)【合作任务】生化合作任务1-无人生还 任务设计与制作                                  [内部Issue#414](https://gitlab.revengenow.top/revenge-now/rn_internal_issues/-/issues/414) ||0.99.916b2|"
+        line4 = "|4|(设定引入)【合作任务】生化合作任务1-无人生还 任务设计与制作                                  [内部Issue#414](https://example.com/-/issues/414) ||0.99.916b2|"
         raw_content = "\n".join(
             [line1, line2, useless_string, line3, line4])
 
@@ -75,7 +76,9 @@ class TestArchiveDocument():
             version_end_str=version_end_str,
             table_separator=table_separator,
             raw_line_pickers=pickers,
-            match_introduce_version=False
+            match_introduce_version=False,
+            include_start_version=True,
+            include_end_version=True
         )
         assert (archive_document.show_new_lines()[0].strip()
                 == line1)
@@ -89,7 +92,9 @@ class TestArchiveDocument():
             version_end_str=version_end_str,
             table_separator=table_separator,
             raw_line_pickers=pickers,
-            match_introduce_version=True
+            match_introduce_version=True,
+            include_start_version=True,
+            include_end_version=True
         )
         assert (archive_document.show_new_lines()[1].strip()
                 == line2)
@@ -125,7 +130,7 @@ class TestArchiveDocument():
         line1 = "|3   |(Bug修复)修复了在攻城拔寨模式中，科技防空堡垒只能对正前方开火 [外部Issue#103](https://example.com) |0.99.915| 0.99.919|"
         line2 = "|4   |(Bug修复)调整了恐怖机器人的攻击射程 [外部Issue#105]  |0.99.919  | 0.99.921|"
         useless_string = "\njidoqj|iaohdoqweq\n"
-        line3 = "|4|(设定引入)【合作任务】生化合作任务1-无人生还 任务设计与制作                                  [内部Issue#414](https://gitlab.revengenow.top/revenge-now/rn_internal_issues/-/issues/414) ||0.99.916b2|"
+        line3 = "|4|(设定引入)【合作任务】生化合作任务1-无人生还 任务设计与制作                                  [内部Issue#414](https://example.com/-/issues/414) ||0.99.916b2|"
         for i in [line1, line2, useless_string, line3]:
             archive_document.add_new_line(i + "\n")
 
@@ -141,8 +146,44 @@ class TestArchiveDocument():
             "[Bug修复(外部Issue#105)]  调整了恐怖机器人的攻击射程"
         )
         assert archive_document.show_new_lines()[2].strip() == (
-            "[设定引入([内部Issue#414](https://gitlab.revengenow.top/revenge-now/rn_internal_issues/-/issues/414))]  【合作任务】生化合作任务1-无人生还 任务设计与制作"
+            "[设定引入([内部Issue#414](https://example.com/-/issues/414))]  【合作任务】生化合作任务1-无人生还 任务设计与制作"
         )
+
+    @pytest.mark.parametrize(
+        "version_start,version_end,target_version,include_start_version,include_end_version,expected_result",
+        [
+            ("0.99.916", "0.99.918", "0.99.916", False, False, False),
+            ("0.99.916", "0.99.918", "0.99.918", False, False, False),
+            ("0.99.916", "0.99.918", "0.99.917", False, False, True),
+            ("0.99.916", "0.99.918", "0.99.916", True, False, True),
+            ("0.99.916", "0.99.918", "0.99.918", True, False, False),
+            ("0.99.916", "0.99.918", "0.99.917", True, False, True),
+            ("0.99.916", "0.99.918", "0.99.916", False, True, False),
+            ("0.99.916", "0.99.918", "0.99.918", False, True, True),
+            ("0.99.916", "0.99.918", "0.99.917", False, True, True),
+            ("0.99.916", "0.99.918", "0.99.916", True, True, True),
+            ("0.99.916", "0.99.918", "0.99.918", True, True, True),
+            ("0.99.916", "0.99.918", "0.99.917", True, True, True),
+        ]
+    )
+    def test_should_version_in_range(
+        self,
+        archive_document: ArchiveDocument,
+        version_start: str,
+        version_end: str,
+        target_version: str,
+        include_start_version: bool,
+        include_end_version: bool,
+        expected_result: bool
+    ):
+
+        assert archive_document.should_version_in_range(
+            version_start=VersionCode(version_start),
+            version_end=VersionCode(version_end),
+            target_version=VersionCode(target_version),
+            include_start_version=include_start_version,
+            include_end_version=include_end_version
+        ) == expected_result
 
     def test_add_brake_line(
         self,

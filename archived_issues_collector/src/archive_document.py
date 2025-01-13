@@ -150,6 +150,29 @@ class ArchiveDocument():
         self.__lines = [i for i in all_lines[skip_header_rows:]
                         if i.strip()]
 
+    def should_version_in_range(
+        self,
+        version_start: VersionCode,
+        version_end: VersionCode,
+        target_version: VersionCode,
+        include_start_version: bool,
+        include_end_version: bool,
+    ) -> bool:
+        is_within_start = False
+        is_within_end = False
+
+        if include_start_version:
+            is_within_start = target_version >= version_start
+        else:
+            is_within_start = target_version > version_start
+
+        if include_end_version:
+            is_within_end = target_version <= version_end
+        else:
+            is_within_end = target_version < version_end
+
+        return is_within_start and is_within_end
+
     def search_line_in_version_range(
         self,
         version_start_str: str,
@@ -157,6 +180,8 @@ class ArchiveDocument():
         table_separator: str,
         raw_line_pickers: list[Config.RawLinePicker],
         match_introduce_version: bool,
+        include_start_version: bool,
+        include_end_version: bool
     ) -> None:
         all_lines = self.__lines
         version_start = VersionCode(version_start_str)
@@ -174,7 +199,13 @@ class ArchiveDocument():
                         )
                     )[0]
                 )
-                version_matched = version_start <= archived_version <= version_end
+                version_matched = self.should_version_in_range(
+                    version_start,
+                    version_end,
+                    archived_version,
+                    include_start_version,
+                    include_end_version
+                )
 
                 if (not version_matched
                         and match_introduce_version):
@@ -187,7 +218,13 @@ class ArchiveDocument():
                             )
                         )[0]
                     )
-                    version_matched = version_start <= introduce_version <= version_end
+                    version_matched = self.should_version_in_range(
+                        version_start,
+                        version_end,
+                        introduce_version,
+                        include_start_version,
+                        include_end_version
+                    )
 
                 if version_matched:
                     result.append(line)
