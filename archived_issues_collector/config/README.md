@@ -45,6 +45,6 @@
 ### gitlab/bitbucket
   - 通过`git fetch`拉取git仓库 获取内容
     - 由于bitbucket没有永久url可以指向git分支中某个文件的最新版本,所以需要另辟蹊径,使用`git fetch`的方式拉取整个仓库(或部分文件)的最新内容
-    - 具体实现方式详见[git_fetch.sh](./script/git_fetch.sh)
+    - 具体实现方式详见[git_fetch.sh](../script/git_fetch.sh)
     - 其中[git_fetch.sh]的 "$REMOTE_GIT_URL" 是这个格式的 : `https://x-token-auth:<personal_token>@bitbucket.org/<username>/<repo>.git`,需要根据这个格式填入正确的内容,并将这个url以Github Secret 的形式让脚本能够使用这个url
     - 拉取文档的工作已经交给[git_fetch.sh],那么[config.json](config.json)配置里的url,样例为 : `file://fetch_file/<path>`
