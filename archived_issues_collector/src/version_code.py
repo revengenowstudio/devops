@@ -63,7 +63,7 @@ class VersionCode():
                  ) -> None:
         self.__raw: str = raw_version
         if (special_version
-            or raw_version == ""):
+                or raw_version == ""):
             self.__version_type = VersionType.special
         else:
             self.__version_type = self.__check_version_type(raw_version)
@@ -78,20 +78,26 @@ class VersionCode():
             # 特殊版本号永远要比其他版本号小
             return result
 
-        parts = self.__convert_parts_to_int(self.parts)
-
-        # 版本号映射到int64的关系如下：
-        # 0.99.914b55
-        # 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000
-        #           0         9    9         9    1    4    b         5    5    左移4位
-
-        # G1028P3
-        # 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000
-        #                               G         1    0    2    8    P         3
-        # 这里的bit_per_part表示版本号是怎么映射的，每部分占多少bit
         bit_per_part: list[int] = [8, 8, 16, 8, 8]
         if self.type == VersionType.old:
             bit_per_part = [8, 16, 8, 8]
+
+        parts = self.__convert_parts_to_int(self.parts)
+
+        # 版本号映射到int64的关系如下：
+        # 0.99.914b55 , [0,99,914,98,55]
+        # 0000_0000_0000_0000_0110_0011_0000_0011_1001_0010_0110_0010_0011_0111_0000_0000
+        #               0             99                 914         b        55    左移4位
+
+        # 0000_0000_0000_0000_0110_0011_0000_0011_1001_0100_0000_0000_0000_0000_0000_0000
+        #               0             99                 916                        左移4位
+        #    0.99.916 :    0b_0110_0011_0000_0011_1001_0100_0000_0000_0000_0000
+        # 子版本号位置置1 :  0b_0110_0011_0000_0011_1001_0100_1111_1111_1111_1111_0000
+
+        # G1028P3 , [103,1028,112,3]
+        # 0000 0000 0000 0000 0000 0000 0110 0111 0000 0000 0100 0100 0111 0000 0011 0000
+        #                                       G                1028         P    3
+        # 这里的bit_per_part表示版本号是怎么映射的，每部分占多少bit
 
         total_bit = sum(bit_per_part)
 
@@ -105,6 +111,11 @@ class VersionCode():
         if self.type == VersionType.new:
             # 新版本号永远要比旧版本大
             result = result << 4
+            if len(parts) == 3:
+                # 正式版本号永远大于测试版本号 , 0.99.916 > 0.99.916b2
+                # 所以正式版本号的子版本号二进制位全部置1
+                mask = 0b1111_1111_1111_1111_0000
+                result = result | mask
 
         # 测试用打印int64映射结果
         # print(f'{self.__raw} :'

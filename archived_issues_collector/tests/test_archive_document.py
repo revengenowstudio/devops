@@ -57,7 +57,7 @@ class TestArchiveDocument():
             ),
         ]
         table_separator = '|'
-        version_start_str = "0.99.916"
+        version_start_str = "0.99.915"
         version_end_str = "0.99.920"
         line1 = "|3|(Bug修复)修复了在攻城拔寨模式中，科技防空堡垒只能对正前方开火 [外部Issue#103] |0.99.915|0.99.919|"
         line2 = "|4|(Bug修复)调整了恐怖机器人的攻击射程 [外部Issue#105]  |0.99.919  | 0.99.921|"
