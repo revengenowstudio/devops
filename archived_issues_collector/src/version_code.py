@@ -8,9 +8,10 @@ from log import Log
 
 
 class VersionType(IntEnum):
+    infinite = -1
+    infinitesimal = 0
     old = 1
     new = 2
-    special = 0
 
 
 class VersionCode():
@@ -55,32 +56,41 @@ class VersionCode():
         if raw_version[0] in string.ascii_letters:
             return VersionType.old
 
-        return VersionType.special
+        return VersionType.infinitesimal
 
     def __init__(self,
-                 raw_version: str,
-                 special_version: bool = False
+                 raw_version: str = "",
+                 infinitesimal_version: bool = False,
+                 infinite_version: bool = False
                  ) -> None:
         self.__raw: str = raw_version
-        if (special_version
+        if (infinitesimal_version
                 or raw_version == ""):
-            self.__version_type = VersionType.special
+            self.__version_type = VersionType.infinitesimal
+        elif infinite_version:
+            self.__version_type = VersionType.infinite
+            raw_version = "∞"
         else:
             self.__version_type = self.__check_version_type(raw_version)
 
         self.__split_version: list[str] = [raw_version]
-        if self.__version_type != VersionType.special:
+        if self.__version_type not in (VersionType.infinitesimal,
+                                       VersionType.infinite):
             self.__split_version = self.__split_version_to_list(raw_version)
 
     def to_int64(self) -> int:
         result: int = 0
-        if self.type == VersionType.special:
+        if self.type == VersionType.infinitesimal:
             # 特殊版本号永远要比其他版本号小
             return result
 
         bit_per_part: list[int] = [8, 8, 16, 8, 8]
         if self.type == VersionType.old:
             bit_per_part = [8, 16, 8, 8]
+            
+        if self.type == VersionType.infinite:
+            # 无穷打版本号永远要比其他版本号大
+            return (1 << (sum(bit_per_part) +1)) -1 
 
         parts = self.__convert_parts_to_int(self.parts)
 
