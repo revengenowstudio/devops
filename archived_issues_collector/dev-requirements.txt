@@ -1,5 +1,4 @@
 httpx
-exceptiongroup
 
 # Development tools
 pytest
