@@ -16,16 +16,6 @@ jobs:
           ref: geo2-ip
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Cache APT packages
-        uses: actions/cache@v4
-        with:
-          path: |
-            /var/cache/apt
-            /var/lib/apt
-          key: ${{ runner.os }}-apt-${{ hashFiles('/etc/apt/sources.list') }}
-          restore-keys: |
-            ${{ runner.os }}-apt-
-
       - name: Install deps
         run: |
           sudo apt-get update -y
