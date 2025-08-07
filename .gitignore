@@ -1,4 +1,5 @@
-﻿output
+﻿!geo2-ip/output/white-list-cn.conf
+# output
 out
 *修改归档*.md
 .VSCodeCounter
