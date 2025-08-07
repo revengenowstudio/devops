@@ -16,11 +16,6 @@ jobs:
           ref: geo2-ip
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Install deps
-        run: |
-          sudo apt-get update -y
-          sudo apt-get install -y curl unzip
-
       - name: Run fetch script
         run: bash geo2-ip/geo2-cn-ip-fetch.sh
         env:
