@@ -55,6 +55,7 @@ CHINA_ID=$(awk -F, '$5=="CN" {print $1}' "${TMP_DIR}/GeoLite2-Country-Locations-
 
 # 4. 过滤出 China 的 IPv4 CIDR，并写成 Nginx allow 格式
 echo ">>> 生成 ${OUT_FILE} ..."
+mkdir -p "$(dirname "${OUT_FILE}")"  
 awk -F, -v id="${CHINA_ID}" '$2==id {print "allow " $1 ";"}' \
     "${TMP_DIR}/GeoLite2-Country-Blocks-IPv4.csv" > "${OUT_FILE}"
 
