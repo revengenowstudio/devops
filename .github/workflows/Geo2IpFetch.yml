@@ -1,0 +1,50 @@
+name: Update CN IP whitelist
+
+on:
+  schedule:
+    # UTC 16:00 对应 UTC+8 00:00
+    - cron: "0 16 * * *"
+  workflow_dispatch: # 允许手动触发
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout geo2-ip branch
+        uses: actions/checkout@v4
+        with:
+          ref: geo2-ip
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Cache APT packages
+        uses: actions/cache@v4
+        with:
+          path: |
+            /var/cache/apt
+            /var/lib/apt
+          key: ${{ runner.os }}-apt-${{ hashFiles('/etc/apt/sources.list') }}
+          restore-keys: |
+            ${{ runner.os }}-apt-
+
+      - name: Install deps
+        run: |
+          sudo apt-get update -y
+          sudo apt-get install -y curl unzip
+
+      - name: Run fetch script
+        run: bash geo2-ip/geo2-cn-ip-fetch.sh
+        env:
+          MAXMIND_ACCOUNT_ID: ${{ secrets.MAXMIND_ACCOUNT_ID }}
+          MAXMIND_LICENSE: ${{ secrets.MAXMIND_LICENSE }}
+
+      - name: Commit & push if changed
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add ./geo2-ip/output/white-list-cn.conf
+          if ! git diff-index --quiet HEAD --; then
+            git commit -m "chore: auto-update CN IPv4 whitelist $(date +%F)"
+            git push origin geo2-ip
+          else
+            echo "No changes to commit."
+          fi
