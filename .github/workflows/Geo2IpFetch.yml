@@ -8,6 +8,7 @@ on:
 
 jobs:
   build:
+    name: Update CN IP whitelist
     runs-on: ubuntu-latest
     steps:
       - name: Checkout geo2-ip branch
@@ -33,3 +34,14 @@ jobs:
           else
             echo "No changes to commit."
           fi
+
+      - name: Setup Python 3.13
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: Verify IPs with Python
+        run: python3 geo2-ip/verify_cn_ip.py
+        env:
+          TEST_CN_IPS: ${{ secrets.TEST_CN_IPS }}
+          TEST_FOREIGN_IPS: ${{ secrets.TEST_FOREIGN_IPS }}
