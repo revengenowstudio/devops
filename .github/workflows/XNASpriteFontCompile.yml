@@ -75,7 +75,9 @@ jobs:
         run: |
           mkdir output
           ls ${{ steps.schema-info.outputs.filename }}
-          ./XNAContentCompiler/XNA-CC-CLI.exe -i ./${{ steps.schema-info.outputs.filename }} -o ./output/ -c
+          $curPath = Get-Location
+          $fileFullPath = "$curPath/${{ steps.schema-info.outputs.filename }}"
+          ./XNAContentCompiler/XNA-CC-CLI.exe -i "$fileFullPath" -o "$curPath/output" -c
           # check outputs, if empty then fail the step
           if ((Get-ChildItem -Path ./output/).Count -eq 0) {
             Write-Error "No output files generated"
