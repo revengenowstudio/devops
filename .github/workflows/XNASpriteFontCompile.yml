@@ -69,10 +69,12 @@ jobs:
           fi
           curl -L -o "$filename" "$url"
           echo "filename=$filename" >> $GITHUB_OUTPUT
+          ls
       - name: Compile spritefont
         shell: pwsh
         run: |
           mkdir output
+          ls ${{ steps.schema-info.outputs.filename }}
           ./XNAContentCompiler/XNA-CC-CLI.exe -i ./${{ steps.schema-info.outputs.filename }} -o ./output/ -c
           # check outputs, if empty then fail the step
           if ((Get-ChildItem -Path ./output/).Count -eq 0) {
