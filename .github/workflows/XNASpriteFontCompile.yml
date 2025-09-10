@@ -39,7 +39,7 @@ jobs:
           .\XNAContentCompiler\XNA-CC-CLI.exe -i ./${{ steps.schema-info.outputs.filename }} -o ./output/
           Create-Archive -Path ./output/* -DestinationPath SpriteFontOutput.zip
       - name: Upload artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: SpriteFontOutput
           path: SpriteFontOutput.zip
