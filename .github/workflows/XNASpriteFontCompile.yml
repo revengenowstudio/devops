@@ -46,7 +46,7 @@ jobs:
           # .NET Framework 4.0 Targeting Pack
           choco install netfx-4.0.3-devpack --yes --force --execution-timeout=3600
           # show content of C:\Users\runneradmin\AppData\Local\Temp\chocolatey\netfx-4.0.3-devpack.log
-          Get-Content -Path "C:\Users\runneradmin\AppData\Local\Temp\chocolatey\netfx-4.0.3-devpack.log"
+          Get-Content -Path "C:\ProgramData\chocolatey\logs\chocolatey.log"
       - name: Download and install XNA 4.0
         run: |
           $xnaUrl = "https://download.microsoft.com/download/a/c/2/ac2c903b-e6e8-42c2-9fd7-bebac362a930/xnafx40_redist.msi"
