@@ -28,22 +28,7 @@ jobs:
       - name: Check some net4 files
         run: |
           $path = "C:\Windows\Microsoft.Net\assembly\GAC_64\System.Data\v4.0_4.0.0.0__b77a5c561934e089\System.Data.dll"
-          if (Test-Path $path) {
-            Write-Host "File exists: $path"
-          } else {
-            Write-Host "File does not exist: $path"
-          }
-          # calc sha256 of the file
-          Get-FileHash -Path $path -Algorithm SHA256
-          # check folder “C:\Windows\Microsoft.NET\Framework\v4.0.30319”
-          $folderPath = "C:\Windows\Microsoft.NET\Framework\v4.0.30319"
-          if (Test-Path $folderPath) {
-            Write-Host "Folder exists: $folderPath"
-          } else {
-            Write-Host "Folder does not exist: $folderPath"
-          }
-          cd $folderPath
-          gacutil /i System.Data.dll
+          Remove-Item $path
       # - name: Install Net4
       #   shell: pwsh
       #   run: |
