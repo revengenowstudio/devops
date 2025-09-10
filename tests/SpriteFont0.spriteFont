@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<XnaContent xmlns:Graphics="Microsoft.Xna.Framework.Content.Pipeline.Graphics">
+  <Asset Type="Graphics:FontDescription">
+    <FontName>Tahoma</FontName>
+    <Size>10</Size>
+    <Spacing>0</Spacing>
+    <UseKerning>true</UseKerning>
+    <Style>Regular</Style>
+    <DefaultCharacter>?</DefaultCharacter>
+    <CharacterRegions>
+      <CharacterRegion>
+        <Start>&#65306;</Start>
+        <End>&#65306;</End>
+      </CharacterRegion>
+      <CharacterRegion>
+        <Start>&#8217;</Start>
+        <End>&#8217;</End>
+      </CharacterRegion>
+      <CharacterRegion>
+        <Start>&#65281;</Start>
+        <End>&#65374;</End>
+      </CharacterRegion>
+    </CharacterRegions>
+  </Asset>
+</XnaContent>

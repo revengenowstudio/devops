@@ -1,0 +1,46 @@
+name: XNA Sprite Font Compile
+on:
+  workflow_dispatch:
+    inputs:
+      schema-path:
+        description: "Path to spritefont schema file"
+        required: true
+        default: "SpriteFont0.spritefont"
+
+jobs:
+  compile:
+    runs-on: windows-latest
+    steps:
+      - name: Download Tool from github release latest using gh cli
+        id: download-tool
+        run: |
+          gh release download --repo revengenowstudio/XNAContentCompiler --pattern "XNAContentCompiler*.zip"
+          # decompress zip file
+          Expand-Archive -Path XNAContentCompiler*.zip -DestinationPath XNAContentCompiler
+      # install msi from sdk/SharedFilesInstaller_File.msi
+      - name: Install SharedFilesInstaller
+        run: |
+          $msiUrl = "https://github.com/revengenowstudio/XNAContentCompiler/raw/refs/heads/master/sdk/SharedFilesInstaller_File.msi"
+          Invoke-WebRequest -Uri $msiUrl -OutFile "sdk/SharedFilesInstaller_File.msi"
+          Start-Process msiexec.exe -ArgumentList '/i sdk/SharedFilesInstaller_File.msi /quiet /norestart' -Wait
+      - name: Download schema file
+        id: schema-info
+        shell: bash
+        run: |
+          url="${{ inputs.schema-path }}"
+          # get last part of url as filename
+          filename=$(basename "$url")
+          curl -L -o "$filename" "$url"
+          echo "filename=$filename" >> $GITHUB_OUTPUT
+      - name: Compile spritefont
+        shell: pwsh
+        run: |
+          mkdir output
+          .\XNAContentCompiler\XNA-CC-CLI.exe -i ./${{ steps.schema-info.outputs.filename }} -o ./output/
+          Create-Archive -Path ./output/* -DestinationPath SpriteFontOutput.zip
+      - name: Upload artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: SpriteFontOutput
+          path: SpriteFontOutput.zip
+          retention-days: 30
