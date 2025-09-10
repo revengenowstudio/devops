@@ -32,6 +32,12 @@ jobs:
           url="${{ inputs.schema-path }}"
           # get last part of url as filename
           filename=$(basename "$url")
+          # check wether url is a github url, and if so, convert to raw url
+          if [[ "$url" == *"github.com"* ]]; then
+            url="${url/github.com/raw}"
+            url="${url/blob/}"
+            echo "Converted github url to raw url: $url"
+          fi
           curl -L -o "$filename" "$url"
           echo "filename=$filename" >> $GITHUB_OUTPUT
       - name: Compile spritefont
