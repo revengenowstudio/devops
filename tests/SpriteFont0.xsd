@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:element name="XnaContent">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="Asset">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="FontName" type="xs:string" />
+              <xs:element name="Size" type="xs:string" />
+              <xs:element name="Spacing" type="xs:string" />
+              <xs:element name="UseKerning" type="xs:string" />
+              <xs:element name="Style" type="xs:string" />
+              <xs:element name="DefaultCharacter" type="xs:string" />
+              <xs:element name="CharacterRegions">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element name="CharacterRegion" maxOccurs="unbounded">
+                      <xs:complexType>
+                        <xs:sequence>
+                          <xs:element name="Start" type="xs:string" />
+                          <xs:element name="End" type="xs:string" />
+                        </xs:sequence>
+                      </xs:complexType>
+                    </xs:element>
+                  </xs:sequence>
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+            <xs:attribute name="Type" use="required" />
+          </xs:complexType>
+        </xs:element>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>
