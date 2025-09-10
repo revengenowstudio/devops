@@ -42,11 +42,13 @@ jobs:
           $downloadUrl = "https://download.microsoft.com/download/9/5/a/95a9616b-7a37-4af6-bc36-d6ea96c8daae/dotNetFx40_Full_x86_x64.exe"
           $output = "dotNetFx40_Full_x86_x64.exe"
           Invoke-WebRequest -Uri $downloadUrl -OutFile $output
-          Start-Process -FilePath $output -ArgumentList "/q /norestart" -Wait
-          # .NET Framework 4.0 Targeting Pack
-          choco install netfx-4.0.3-devpack --yes --force --execution-timeout=3600
-          # show content of C:\Users\runneradmin\AppData\Local\Temp\chocolatey\netfx-4.0.3-devpack.log
-          Get-Content -Path "C:\ProgramData\chocolatey\logs\chocolatey.log"
+          Start-Process -FilePath $output -ArgumentList "/norestart" -Wait
+          # Check the exit code
+          if ($LASTEXITCODE -eq 0) {
+              Write-Host "Installation succeeded."
+          } else {
+              Write-Host "Installation failed with exit code $LASTEXITCODE."
+          }
       - name: Download and install XNA 4.0
         run: |
           $xnaUrl = "https://download.microsoft.com/download/a/c/2/ac2c903b-e6e8-42c2-9fd7-bebac362a930/xnafx40_redist.msi"
