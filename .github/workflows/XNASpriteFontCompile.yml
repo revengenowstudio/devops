@@ -34,8 +34,16 @@ jobs:
             Write-Host "File does not exist: $path"
           }
           # calc sha256 of the file
-          $sha256 = Get-FileHash -Path $path -Algorithm SHA256
-          Write-Host "SHA256: $($sha256.Hash)"
+          Get-FileHash -Path $path -Algorithm SHA256
+          # check folder “C:\Windows\Microsoft.NET\Framework\v4.0.30319”
+          $folderPath = "C:\Windows\Microsoft.NET\Framework\v4.0.30319"
+          if (Test-Path $folderPath) {
+            Write-Host "Folder exists: $folderPath"
+            # list files in the folder
+            Get-ChildItem -Path $folderPath
+          } else {
+            Write-Host "Folder does not exist: $folderPath"
+          }
       - name: Install Net4
         shell: pwsh
         run: |
@@ -43,12 +51,6 @@ jobs:
           $output = "NDP452-KB2901951-x86-x64-DevPack.exe"
           Invoke-WebRequest -Uri $downloadUrl -OutFile $output
           Start-Process -FilePath $output -ArgumentList "/q /norestart" -Wait
-          # Check the exit code
-          if ($LASTEXITCODE -eq 0) {
-              Write-Host "Installation succeeded."
-          } else {
-              Write-Host "Installation failed with exit code $LASTEXITCODE."
-          }
       - name: Download and install XNA 4.0
         run: |
           $xnaUrl = "https://download.microsoft.com/download/a/c/2/ac2c903b-e6e8-42c2-9fd7-bebac362a930/xnafx40_redist.msi"
