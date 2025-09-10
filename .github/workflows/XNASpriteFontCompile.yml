@@ -56,7 +56,7 @@ jobs:
         shell: pwsh
         run: |
           mkdir output
-          .\XNAContentCompiler\XNA-CC-CLI.exe -i ./${{ steps.schema-info.outputs.filename }} -o ./output/
+          .\XNAContentCompiler\XNA-CC-CLI.exe -i ./${{ steps.schema-info.outputs.filename }} -o ./output/ -c
           # check outputs, if empty then fail the step
           if ((Get-ChildItem -Path ./output/).Count -eq 0) {
             Write-Error "No output files generated"
