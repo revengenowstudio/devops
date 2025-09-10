@@ -50,6 +50,11 @@ jobs:
         run: |
           mkdir output
           .\XNAContentCompiler\XNA-CC-CLI.exe -i ./${{ steps.schema-info.outputs.filename }} -o ./output/
+          # check outputs, if empty then fail the step
+          if ((Get-ChildItem -Path ./output/).Count -eq 0) {
+            Write-Error "No output files generated"
+            exit 1
+          }
           Compress-Archive -Path ./output/* -DestinationPath SpriteFontOutput.zip
       - name: Upload artifact
         uses: actions/upload-artifact@v4
