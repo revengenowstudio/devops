@@ -15,7 +15,7 @@ jobs:
         shell: bash
         run: |
           path="C:/Windows/Microsoft.Net/assembly/GAC_64/System.Data/v4.0_4.0.0.0__b77a5c561934e089/System.Data.dll"
-          sudo rm -f "$path"
+          rm -f "$path"
       - name: Download Tool from github release latest using gh cli
         id: download-tool
         env:
