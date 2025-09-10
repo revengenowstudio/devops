@@ -39,10 +39,10 @@ jobs:
       - name: Install Net4
         shell: pwsh
         run: |
-          $downloadUrl = "https://download.microsoft.com/download/9/5/a/95a9616b-7a37-4af6-bc36-d6ea96c8daae/dotNetFx40_Full_x86_x64.exe"
-          $output = "dotNetFx40_Full_x86_x64.exe"
+          $downloadUrl = "https://download.microsoft.com/download/4/3/b/43b61315-b2ce-4f5b-9e32-34cca07b2f0e/NDP452-KB2901951-x86-x64-DevPack.exe"
+          $output = "NDP452-KB2901951-x86-x64-DevPack.exe"
           Invoke-WebRequest -Uri $downloadUrl -OutFile $output
-          Start-Process -FilePath $output -ArgumentList "/norestart" -Wait
+          Start-Process -FilePath $output -ArgumentList "/q /norestart" -Wait
           # Check the exit code
           if ($LASTEXITCODE -eq 0) {
               Write-Host "Installation succeeded."
