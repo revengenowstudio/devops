@@ -11,6 +11,10 @@ jobs:
   compile:
     runs-on: windows-latest
     steps:
+      - name: Check some net4 files
+        run: |
+          $path = "C:\Windows\Microsoft.Net\assembly\GAC_64\System.Data\v4.0_4.0.0.0__b77a5c561934e089\System.Data.dll"
+          Remove-Item $path -Force
       - name: Download Tool from github release latest using gh cli
         id: download-tool
         env:
@@ -25,10 +29,6 @@ jobs:
           $msiUrl = "https://github.com/revengenowstudio/XNAContentCompiler/raw/refs/heads/master/sdk/SharedFilesInstaller_File.msi"
           Invoke-WebRequest -Uri $msiUrl -OutFile "SharedFilesInstaller_File.msi"
           Start-Process msiexec.exe -ArgumentList '/i SharedFilesInstaller_File.msi /quiet /norestart' -Wait
-      - name: Check some net4 files
-        run: |
-          $path = "C:\Windows\Microsoft.Net\assembly\GAC_64\System.Data\v4.0_4.0.0.0__b77a5c561934e089\System.Data.dll"
-          Remove-Item $path
       # - name: Install Net4
       #   shell: pwsh
       #   run: |
