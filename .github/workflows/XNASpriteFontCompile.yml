@@ -38,7 +38,9 @@ jobs:
         run: |
           $msiUrl = "https://github.com/revengenowstudio/XNAContentCompiler/raw/refs/heads/master/sdk/SharedFilesInstaller_File.msi"
           Invoke-WebRequest -Uri $msiUrl -OutFile "SharedFilesInstaller_File.msi"
-          Start-Process msiexec.exe -ArgumentList '/i SharedFilesInstaller_File.msi /quiet /norestart' -Wait
+          Start-Process msiexec.exe -ArgumentList '/i SharedFilesInstaller_File.msi /quiet /qn /norestart /log install.log' -Wait
+          # show log
+          Get-Content install.log
       # - name: Install Net4
       #   shell: pwsh
       #   run: |
@@ -50,7 +52,8 @@ jobs:
         run: |
           $xnaUrl = "https://download.microsoft.com/download/a/c/2/ac2c903b-e6e8-42c2-9fd7-bebac362a930/xnafx40_redist.msi"
           Invoke-WebRequest -Uri $xnaUrl -OutFile "xnafx40_redist.msi"
-          Start-Process msiexec.exe -ArgumentList '/i xnafx40_redist.msi /quiet /norestart' -Wait
+          Start-Process msiexec.exe -ArgumentList '/i xnafx40_redist.msi /quiet /qn /norestart /log install.log' -Wait
+          Get-Content install.log
       - name: Download schema file
         id: schema-info
         shell: bash
