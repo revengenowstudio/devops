@@ -80,14 +80,14 @@ jobs:
           mkdir output
           ls ${{ steps.schema-info.outputs.filename }}
           $curPath = Get-Location
-          $fileFullPath = "$curPath/${{ steps.schema-info.outputs.filename }}"
-          ./XNAContentCompiler/XNA-CC-CLI.exe -i "$fileFullPath" -o "$curPath/output" -c
+          $fileFullPath = "$curPath\${{ steps.schema-info.outputs.filename }}"
+          .\XNAContentCompiler\XNA-CC-CLI.exe -i "$fileFullPath" -o "$curPath\output" -c
           # check outputs, if empty then fail the step
-          if ((Get-ChildItem -Path ./output/).Count -eq 0) {
+          if ((Get-ChildItem -Path .\output\).Count -eq 0) {
             Write-Error "No output files generated"
             exit 1
           }
-          Compress-Archive -Path ./output/* -DestinationPath SpriteFontOutput.zip
+          Compress-Archive -Path .\output\* -DestinationPath SpriteFontOutput.zip
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
