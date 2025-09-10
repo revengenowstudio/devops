@@ -39,18 +39,18 @@ jobs:
           $folderPath = "C:\Windows\Microsoft.NET\Framework\v4.0.30319"
           if (Test-Path $folderPath) {
             Write-Host "Folder exists: $folderPath"
-            # list files in the folder
-            Get-ChildItem -Path $folderPath
           } else {
             Write-Host "Folder does not exist: $folderPath"
           }
-      - name: Install Net4
-        shell: pwsh
-        run: |
-          $downloadUrl = "https://download.microsoft.com/download/4/3/b/43b61315-b2ce-4f5b-9e32-34cca07b2f0e/NDP452-KB2901951-x86-x64-DevPack.exe"
-          $output = "NDP452-KB2901951-x86-x64-DevPack.exe"
-          Invoke-WebRequest -Uri $downloadUrl -OutFile $output
-          Start-Process -FilePath $output -ArgumentList "/q /norestart" -Wait
+          cd $folderPath
+          gacutil /i System.Data.dll
+      # - name: Install Net4
+      #   shell: pwsh
+      #   run: |
+      #     $downloadUrl = "https://download.microsoft.com/download/4/3/b/43b61315-b2ce-4f5b-9e32-34cca07b2f0e/NDP452-KB2901951-x86-x64-DevPack.exe"
+      #     $output = "NDP452-KB2901951-x86-x64-DevPack.exe"
+      #     Invoke-WebRequest -Uri $downloadUrl -OutFile $output
+      #     Start-Process -FilePath $output -ArgumentList "/q /norestart" -Wait
       - name: Download and install XNA 4.0
         run: |
           $xnaUrl = "https://download.microsoft.com/download/a/c/2/ac2c903b-e6e8-42c2-9fd7-bebac362a930/xnafx40_redist.msi"
