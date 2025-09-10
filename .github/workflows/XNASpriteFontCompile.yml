@@ -13,6 +13,8 @@ jobs:
     steps:
       - name: Download Tool from github release latest using gh cli
         id: download-tool
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
           gh release download --repo revengenowstudio/XNAContentCompiler --pattern "XNAContentCompiler*.zip"
           # decompress zip file
