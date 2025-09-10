@@ -25,6 +25,13 @@ jobs:
           $msiUrl = "https://github.com/revengenowstudio/XNAContentCompiler/raw/refs/heads/master/sdk/SharedFilesInstaller_File.msi"
           Invoke-WebRequest -Uri $msiUrl -OutFile "SharedFilesInstaller_File.msi"
           Start-Process msiexec.exe -ArgumentList '/i SharedFilesInstaller_File.msi /quiet /norestart' -Wait
+      - name: Install Net4
+        shell: pwsh
+        run: |
+          $downloadUrl = "https://download.microsoft.com/download/e/2/1/e21644b5-2df2-47c2-91bd-63c560427900/NDP452-KB2901907-x86-x64-AllOS-ENU.exe"
+          $output = "NDP452-KB2901907-x86-x64-AllOS-ENU.exe"
+          Invoke-WebRequest -Uri $downloadUrl -OutFile $output
+          Start-Process -FilePath $output -ArgumentList "/quiet", "/norestart" -Wait
       - name: Download and install XNA 4.0
         run: |
           $xnaUrl = "https://download.microsoft.com/download/a/c/2/ac2c903b-e6e8-42c2-9fd7-bebac362a930/xnafx40_redist.msi"
