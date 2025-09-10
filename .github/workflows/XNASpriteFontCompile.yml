@@ -69,6 +69,9 @@ jobs:
           fi
           curl -L -o "$filename" "$url"
           echo "filename=$filename" >> $GITHUB_OUTPUT
+          # replace '.spritefont' with '.xsd' in url
+          url="${url/.spritefont/.xsd}"
+          curl -L -o "${filename/.spritefont/.xsd}" "$url"
           ls
       - name: Compile spritefont
         shell: pwsh
