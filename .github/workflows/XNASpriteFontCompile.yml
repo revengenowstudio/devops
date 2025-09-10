@@ -23,8 +23,8 @@ jobs:
       - name: Install SharedFilesInstaller
         run: |
           $msiUrl = "https://github.com/revengenowstudio/XNAContentCompiler/raw/refs/heads/master/sdk/SharedFilesInstaller_File.msi"
-          Invoke-WebRequest -Uri $msiUrl -OutFile "sdk/SharedFilesInstaller_File.msi"
-          Start-Process msiexec.exe -ArgumentList '/i sdk/SharedFilesInstaller_File.msi /quiet /norestart' -Wait
+          Invoke-WebRequest -Uri $msiUrl -OutFile "SharedFilesInstaller_File.msi"
+          Start-Process msiexec.exe -ArgumentList '/i SharedFilesInstaller_File.msi /quiet /norestart' -Wait
       - name: Download schema file
         id: schema-info
         shell: bash
