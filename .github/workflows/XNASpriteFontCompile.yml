@@ -20,7 +20,9 @@ jobs:
           filename=$(basename "$url")
           # check wether url is a github url, and if so, convert to raw url
           # check whether url contains 'raw/refs'
-          if [[ "$url" == *"github.com"* && "$url" == *"/raw/refs"* ]]; then
+          if [[ "$url" == *"/raw/"* ]]; then
+            echo "URL already contains /raw/, no conversion needed."
+          else
             # replace 'blob' with 'raw/refs/heads'
             url="${url/\/blob\//\/raw\/refs\/heads\/}"
           fi
@@ -28,9 +30,6 @@ jobs:
           curl -L -o "$filename" "$url"
           echo "filename=$filename" >> $GITHUB_OUTPUT
           echo "input downloaded"
-          # replace '.spriteFont' with '.xsd' in url
-          url="${url/.spriteFont/.xsd}"
-          curl -L -o "${filename/.spriteFont/.xsd}" "$url"
           ls
       - name: Check some net4 files
         shell: bash
