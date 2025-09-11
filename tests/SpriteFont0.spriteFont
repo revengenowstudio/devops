@@ -10,6 +10,10 @@
     <DefaultCharacter>?</DefaultCharacter>
     <CharacterRegions>
       <CharacterRegion>
+        <Start>?</Start>
+        <End>?</End>
+      </CharacterRegion>
+      <CharacterRegion>
         <Start>&#65306;</Start>
         <End>&#65306;</End>
       </CharacterRegion>
