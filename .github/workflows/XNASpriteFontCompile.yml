@@ -67,6 +67,7 @@ jobs:
             # replace 'blob' with 'raw/refs/heads'
             url="${url/\/blob\//\/raw\/refs\/heads\/}"
           fi
+          echo "Downloading $url to $filename"
           curl -L -o "$filename" "$url"
           echo "filename=$filename" >> $GITHUB_OUTPUT
           echo "input downloaded"
