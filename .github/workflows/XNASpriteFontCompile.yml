@@ -11,20 +11,20 @@ jobs:
   compile:
     runs-on: windows-latest
     steps:
-      # - name: Check some net4 files
-      #   shell: bash
-      #   run: |
-      #     problematicDlls=(
-      #       "C:/Windows/Microsoft.Net/assembly/GAC_64/System.Data/v4.0_4.0.0.0__b77a5c561934e089/System.Data.dll"
-      #       "C:/Windows/Microsoft.Net/assembly/GAC_64/System.Transactions/v4.0_4.0.0.0__b77a5c561934e089/System.Transactions.dll"
-      #       "C:/Windows/Microsoft.Net/assembly/GAC_64/System.EnterpriseServices/v4.0_4.0.0.0__b03f5f7f11d50a3a/System.EnterpriseServices.dll"
-      #       "C:/Windows/Microsoft.Net/assembly/GAC_64/System.Web/v4.0_4.0.0.0__b03f5f7f11d50a3a/System.Web.dll"
-      #       "C:/Windows/Microsoft.Net/assembly/GAC_64/System.Data.OracleClient/v4.0_4.0.0.0__b77a5c561934e089/System.Data.OracleClient.dll"
-      #     )
-      #     for dll in "${problematicDlls[@]}"; do
-      #       path="$dll"
-      #       rm -f "$path"
-      #     done
+      - name: Check some net4 files
+        shell: bash
+        run: |
+          problematicDlls=(
+            "C:/Windows/Microsoft.Net/assembly/GAC_64/System.Data/v4.0_4.0.0.0__b77a5c561934e089/System.Data.dll"
+            "C:/Windows/Microsoft.Net/assembly/GAC_64/System.Transactions/v4.0_4.0.0.0__b77a5c561934e089/System.Transactions.dll"
+            "C:/Windows/Microsoft.Net/assembly/GAC_64/System.EnterpriseServices/v4.0_4.0.0.0__b03f5f7f11d50a3a/System.EnterpriseServices.dll"
+            "C:/Windows/Microsoft.Net/assembly/GAC_64/System.Web/v4.0_4.0.0.0__b03f5f7f11d50a3a/System.Web.dll"
+            "C:/Windows/Microsoft.Net/assembly/GAC_64/System.Data.OracleClient/v4.0_4.0.0.0__b77a5c561934e089/System.Data.OracleClient.dll"
+          )
+          for dll in "${problematicDlls[@]}"; do
+            path="$dll"
+            rm -f "$path"
+          done
       - name: Download Tool from github release latest using gh cli
         id: download-tool
         env:
@@ -75,29 +75,29 @@ jobs:
           url="${url/.spriteFont/.xsd}"
           curl -L -o "${filename/.spriteFont/.xsd}" "$url"
           ls
-      # - name: Compile spritefont
-      #   shell: pwsh
-      #   run: |
-      #     mkdir output
-      #     ls ${{ steps.schema-info.outputs.filename }}
-      #     $curPath = Get-Location
-      #     $fileFullPath = "$curPath\${{ steps.schema-info.outputs.filename }}"
-      #     .\XNAContentCompiler\XNA-CC-CLI.exe -i "$fileFullPath" -o "$curPath\output" -c
-      #     # check outputs, if empty then fail the step
-      #     if ((Get-ChildItem -Path .\output\).Count -eq 0) {
-      #       Write-Error "No output files generated"
-      #       exit 1
-      #     }
-      #     Compress-Archive -Path .\output\* -DestinationPath SpriteFontOutput.zip
-      - name: Compile spritefont using mgcb
+      - name: Compile spritefont
         shell: pwsh
         run: |
-          dotnet tool install -g dotnet-mgcb
           mkdir output
           ls ${{ steps.schema-info.outputs.filename }}
-          cat ${{ steps.schema-info.outputs.filename }}
-          mgcb /build:"${{ steps.schema-info.outputs.filename }}" /outputDir:output /intermediateDir:obj/DesktopGL /compress
+          $curPath = Get-Location
+          $fileFullPath = "$curPath\${{ steps.schema-info.outputs.filename }}"
+          .\XNAContentCompiler\XNA-CC-CLI.exe -i "$fileFullPath" -o "$curPath\output" -c
+          # check outputs, if empty then fail the step
+          if ((Get-ChildItem -Path .\output\).Count -eq 0) {
+            Write-Error "No output files generated"
+            exit 1
+          }
           Compress-Archive -Path .\output\* -DestinationPath SpriteFontOutput.zip
+      # - name: Compile spritefont using mgcb
+      #   shell: pwsh
+      #   run: |
+      #     dotnet tool install -g dotnet-mgcb
+      #     mkdir output
+      #     ls ${{ steps.schema-info.outputs.filename }}
+      #     cat ${{ steps.schema-info.outputs.filename }}
+      #     mgcb /build:"${{ steps.schema-info.outputs.filename }}" /outputDir:output /intermediateDir:obj/DesktopGL /compress
+      #     Compress-Archive -Path .\output\* -DestinationPath SpriteFontOutput.zip
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
