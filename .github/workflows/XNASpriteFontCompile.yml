@@ -86,9 +86,9 @@ jobs:
           # check outputs, if empty then fail the step
           if ((Get-ChildItem -Path .\output\).Count -eq 0) {
             Write-Error "No output files generated"
+            cat ${{ steps.schema-info.outputs.filename }}
             exit 1
           }
-          Compress-Archive -Path .\output\* -DestinationPath SpriteFontOutput.zip
       # - name: Compile spritefont using mgcb
       #   shell: pwsh
       #   run: |
@@ -102,5 +102,5 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: SpriteFontOutput
-          path: SpriteFontOutput.zip
+          path: output/*
           retention-days: 30
