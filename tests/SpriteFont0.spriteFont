@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<XnaContent xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
- xsi:noNamespaceSchemaLocation="SpriteFont0.xsd" xmlns:Graphics="Microsoft.Xna.Framework.Content.Pipeline.Graphics">
+<XnaContent xmlns:Graphics="Microsoft.Xna.Framework.Content.Pipeline.Graphics">
   <Asset Type="Graphics:FontDescription">
     <FontName>Tahoma</FontName>
     <Size>10</Size>
