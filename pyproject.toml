@@ -1,0 +1,25 @@
+[project]
+description = "Add your description here"
+name = "devops"
+readme = "README.md"
+requires-python = ">=3.10"
+version = "0.1.0"
+dependencies = [
+  "httpx>=0.28.1",
+]
+
+[dependency-groups]
+dev = [
+  "pytest>=8.4.2",
+  "pytest-mock>=3.15.1",
+]
+unittest = [
+  "pytest>=8.4.2",
+  "httpx>=0.28.1",
+]
+
+[project.optional-dependencies]
+unittest = [
+  "pytest>=8.4.2",
+  "httpx>=0.28.1",
+]
