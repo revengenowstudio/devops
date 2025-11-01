@@ -15,7 +15,7 @@ class Log:
     match_much_archive_content = """匹配到{count}条符合版本范围的归档内容"""
     write_content_to = """正在将匹配到的内容写入到 {path}"""
     input_version_range = '''输入的版本号范围为："{start}" - "{end}"'''
-    match_introduce_version = """是否匹配引入版本号：{match_introduce_version}"""
+    ignore_introduce_version = """忽略引入版本号：{ignore_introduce_version}"""
     include_start_version = """是否包含起始版本号：{result}"""
     include_end_version = """是否包含结束版本号：{result}"""
     input_version_empty = """输入的版本号为空"""
@@ -55,10 +55,10 @@ class Log:
     类型 : 字符串
     描述: A ccess token,若填写则请求归档文件时会携带此token
 
-    -miv --match-introduce-version   
+    -iiv --ignore-introduce-version   
     选填
     类型 : 字符串
-    描述 : 筛选归档内容时是否匹配引入版本号,默认为否,使用时需要再后面添加true
+    描述 : 筛选归档内容时忽略引入版本号,默认为否,使用时需要再后面添加true
 
 
     示例 :
@@ -67,5 +67,5 @@ class Log:
     --version-start "0.99.918"            \\
     --version-end "0.99.918"              \\
     --repository-token "test_token"       \\  
-    --match-introduce-version true        \\
+    --ignore-introduce-version true        \\
     """

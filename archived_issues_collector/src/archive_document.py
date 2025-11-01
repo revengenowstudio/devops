@@ -157,7 +157,7 @@ class ArchiveDocument:
         version_end_str: str,
         table_separator: str,
         raw_line_pickers: list[Config.RawLinePicker],
-        match_introduce_version: bool,
+        ignore_introduce_version: bool,
         include_start_version: bool,
         include_end_version: bool,
     ) -> None:
@@ -184,7 +184,7 @@ class ArchiveDocument:
                     include_end_version,
                 )
 
-                if not version_matched and match_introduce_version:
+                if not version_matched and not ignore_introduce_version:
                     introduce_version = VersionCode(
                         self.__apply_single_picker(
                             column,
