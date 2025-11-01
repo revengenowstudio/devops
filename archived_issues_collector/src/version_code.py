@@ -13,18 +13,16 @@ class VersionType(IntEnum):
     special = 0
 
 
-class VersionCode():
-
+class VersionCode:
     @staticmethod
     def should_version_valid(raw_version: str) -> None:
         if raw_version == "":
-            raise ValueError(
-                Log.input_version_empty)
+            raise ValueError(Log.input_version_empty)
 
     @staticmethod
     def __split_version_to_list(raw_version: str) -> list[str]:
         # 使用正则表达式匹配数字和单个字母
-        parts: list[str] = re.findall(r'\d+|[a-zA-Z]', raw_version)
+        parts: list[str] = re.findall(r"\d+|[a-zA-Z]", raw_version)
         return parts
 
     @staticmethod
@@ -57,13 +55,9 @@ class VersionCode():
 
         return VersionType.special
 
-    def __init__(self,
-                 raw_version: str,
-                 special_version: bool = False
-                 ) -> None:
+    def __init__(self, raw_version: str, special_version: bool = False) -> None:
         self.__raw: str = raw_version
-        if (special_version
-                or raw_version == ""):
+        if special_version or raw_version == "":
             self.__version_type = VersionType.special
         else:
             self.__version_type = self.__check_version_type(raw_version)
@@ -104,7 +98,7 @@ class VersionCode():
         # 从高位到低位依次组合各部分
         for index, part in enumerate(parts):
             # 计算当前部分的位移量
-            shift_amount = total_bit - sum(bit_per_part[:index+1])
+            shift_amount = total_bit - sum(bit_per_part[: index + 1])
             # 使用按位或操作将当前部分组合到 result 中
             result |= (part & ((1 << bit_per_part[index]) - 1)) << shift_amount
 
@@ -125,8 +119,8 @@ class VersionCode():
         #     ," ".join(bin_text))
         return result
 
-    def __lt__(self, other_version: 'VersionCode') -> bool:
-        '''self < other_version'''
+    def __lt__(self, other_version: "VersionCode") -> bool:
+        """self < other_version"""
         if self == other_version:
             return False
         if self.to_int64() < other_version.to_int64():
@@ -134,8 +128,8 @@ class VersionCode():
         else:
             return False
 
-    def __le__(self, other_version: 'VersionCode') -> bool:
-        '''self <= other_version'''
+    def __le__(self, other_version: "VersionCode") -> bool:
+        """self <= other_version"""
         if self == other_version:
             return True
         if self < other_version:
@@ -143,8 +137,8 @@ class VersionCode():
         else:
             return False
 
-    def __gt__(self, other_version: 'VersionCode') -> bool:
-        '''self > other_version'''
+    def __gt__(self, other_version: "VersionCode") -> bool:
+        """self > other_version"""
         if self == other_version:
             return False
         if self < other_version:
@@ -152,8 +146,8 @@ class VersionCode():
         else:
             return True
 
-    def __ge__(self, other_version: 'VersionCode') -> bool:
-        '''self >= other_version'''
+    def __ge__(self, other_version: "VersionCode") -> bool:
+        """self >= other_version"""
         if self == other_version:
             return True
         if self < other_version:
@@ -161,14 +155,16 @@ class VersionCode():
         else:
             return True
 
-    def __ne__(self, other_version: 'VersionCode') -> bool:
-        '''self != other_version'''
+    def __ne__(self, other_version: "VersionCode") -> bool:
+        """self != other_version"""
         return not self.__eq__(other_version)
 
-    def __eq__(self, other_version: 'VersionCode') -> bool:
-        '''self == other_version'''
-        if (str(self) == str(other_version)
-                or self.to_int64() == other_version.to_int64()):
+    def __eq__(self, other_version: "VersionCode") -> bool:
+        """self == other_version"""
+        if (
+            str(self) == str(other_version)
+            or self.to_int64() == other_version.to_int64()
+        ):
             return True
         else:
             return False

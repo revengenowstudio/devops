@@ -27,21 +27,20 @@ def http_request(
             )
             match response.status_code:
                 case HTTPStatus.NOT_FOUND:
-                    print(Log.http_404_not_found
-                          .format(url=url))
+                    print(Log.http_404_not_found.format(url=url))
                 case HTTPStatus.UNAUTHORIZED:
-                    print(Log.http_401_unauthorized
-                          .format(url=url))
+                    print(Log.http_401_unauthorized.format(url=url))
             response.raise_for_status()
             return response
         except httpx.HTTPStatusError:
             try:
-                print(Log.http_status_error
-                      .format(
-                          reason=json_dumps(
-                              response.json(),
-                          ),
-                      ))
+                print(
+                    Log.http_status_error.format(
+                        reason=json_dumps(
+                            response.json(),
+                        ),
+                    )
+                )
             except Exception:
                 pass
             raise
