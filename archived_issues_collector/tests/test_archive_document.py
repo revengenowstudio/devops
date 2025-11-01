@@ -57,7 +57,7 @@ class TestArchiveDocument:
             version_end_str=version_end_str,
             table_separator=table_separator,
             raw_line_pickers=pickers,
-            match_introduce_version=False,
+            ignore_introduce_version=True,
             include_start_version=True,
             include_end_version=True,
         )
@@ -70,7 +70,7 @@ class TestArchiveDocument:
             version_end_str=version_end_str,
             table_separator=table_separator,
             raw_line_pickers=pickers,
-            match_introduce_version=True,
+            ignore_introduce_version=False,
             include_start_version=True,
             include_end_version=True,
         )

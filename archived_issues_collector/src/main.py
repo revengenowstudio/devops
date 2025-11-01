@@ -79,7 +79,7 @@ def main():
             version_end_str=config.version_end,
             table_separator=config.archive_document.table_separator,
             raw_line_pickers=config.archive_document.raw_line_pickers,
-            match_introduce_version=config.match_introduce_version,
+            ignore_introduce_version=config.ignore_introduce_version,
             include_start_version=config.include_start_version,
             include_end_version=config.include_end_version,
         )

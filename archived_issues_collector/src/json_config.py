@@ -38,7 +38,7 @@ class Config:
     repository_token: str = str()
     version_start: str = str()
     version_end: str = str()
-    match_introduce_version: bool = False
+    ignore_introduce_version: bool = True
     include_start_version: bool = True
     include_end_version: bool = False
 

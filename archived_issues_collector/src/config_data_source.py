@@ -38,8 +38,8 @@ class ArgsConfigDataSource(DataSource):
         )
         config.version_start = get_value_from_args("-vs", "--version-start")
         config.version_end = get_value_from_args("-ve", "--version-end")
-        config.match_introduce_version = str_to_bool(
-            get_value_from_args_or_default("-miv", "--match-introduce-version")
+        config.ignore_introduce_version = str_to_bool(
+            get_value_from_args_or_default("-iiv", "--ignore-introduce-version")
         )
         config.include_start_version = str_to_bool(
             get_value_from_args_or_default("-isv", "--include-start-version")
@@ -54,8 +54,8 @@ class ArgsConfigDataSource(DataSource):
             )
         )
         print(
-            Log.match_introduce_version.format(
-                match_introduce_version=config.match_introduce_version
+            Log.ignore_introduce_version.format(
+                ignore_introduce_version=config.ignore_introduce_version
             )
         )
         print(Log.include_start_version.format(result=config.include_start_version))
