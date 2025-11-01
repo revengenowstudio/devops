@@ -12,17 +12,21 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Set up Python and install dependencies
-        uses: actions/setup-python@v5
+        uses: actions/checkout@v5
         with:
-          python-version: "3.10"
-          cache: 'pip' # caching pip dependencies
-      - run: |
-          pip install -r ./archived_issues_collector/requirements.txt
-          pip install pytest
+          fetch-depth: 1 
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v7
+        with:
+          enable-cache: "true"
+          cache-python: "true"
+          
+      - name: Install dev dependencies
+        run: uv sync --frozen --dev
         
       - name: Run unit test
         run: |
-          pytest
+          uv run pytest
+
+      

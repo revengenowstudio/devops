@@ -34,8 +34,10 @@ jobs:
   archive-issues-collector:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 1 
 
       - name: Checkout remote git repo
         env:
@@ -43,17 +45,18 @@ jobs:
         run: |
           bash ./archived_issues_collector/script/git_fetch.sh
 
-      - name: Set up Python and install dependencies
-        uses: actions/setup-python@v5
+      - name: Install uv
+        uses: astral-sh/setup-uv@v7
         with:
-          python-version: "3.10"
-          cache: 'pip' # caching pip dependencies
-      - run: |
-          pip install -r ./archived_issues_collector/requirements.txt
+          enable-cache: "true"
+          cache-python: "true"
+          
+      - name: Install dependencies
+        run: uv sync --frozen
 
       - name: Run the program
         run: |
-          python ./archived_issues_collector/src/main.py --config ./archived_issues_collector/config/config.json --version-start ${{ inputs.version_start }} --version-end ${{ inputs.version_end }} --match-introduce-version ${{ inputs.match_introduce_version }} --include-start-version ${{ inputs.include_start_version }} --include-end-version ${{ inputs.include_end_version }}
+          uv run ./archived_issues_collector/src/main.py --config ./archived_issues_collector/config/config.json --version-start ${{ inputs.version_start }} --version-end ${{ inputs.version_end }} --match-introduce-version ${{ inputs.match_introduce_version }} --include-start-version ${{ inputs.include_start_version }} --include-end-version ${{ inputs.include_end_version }}
 
       - name: Upload file to artifact 
         uses: actions/upload-artifact@v4
