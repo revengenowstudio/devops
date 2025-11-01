@@ -5,16 +5,14 @@ from base64_decode import base64_decode_str
 from http_request import http_request
 
 
-class ArchiveDocumentCollector():
+class ArchiveDocumentCollector:
     def __init__(self, token: str | None = None):
         self.__token_header = self.__make_token_header(token)
 
     def __make_token_header(self, token: str | None) -> dict[str, str]:
         if token is None:
             return {}
-        return {
-            "Authorization": f"Bearer {token}"
-        }
+        return {"Authorization": f"Bearer {token}"}
 
     def collect_document(
         self,
@@ -34,11 +32,7 @@ class ArchiveDocumentCollector():
         if use_token:
             new_headers.update(self.__token_header)
 
-        response = http_request(
-            url=url,
-            method="GET",
-            headers=new_headers
-        )
+        response = http_request(url=url, method="GET", headers=new_headers)
 
         if json_api:
             result = response.json()[content_key]

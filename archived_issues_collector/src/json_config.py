@@ -5,31 +5,28 @@ IssueType: TypeAlias = str
 
 
 @dataclass
-class Config():
+class Config:
     @dataclass
-    class ArchivedIssuesInfo():
+    class ArchivedIssuesInfo:
         url: str = str()
         json_api: bool = False
         content_key: str = str()
         base64_decode: bool = False
         use_token: bool = False
-        http_headers: dict[str, str] = field(
-            default_factory=dict)
+        http_headers: dict[str, str] = field(default_factory=dict)
 
     @dataclass
-    class RawLinePicker():
+    class RawLinePicker:
         column_index: int = 0
-        pick_types: list[str] = field(
-            default_factory=list)
+        pick_types: list[str] = field(default_factory=list)
         regex: str | None = None
 
     @dataclass
-    class ArchivedDocument():
+    class ArchivedDocument:
         skip_header_rows: int = 0
         table_separator: str = str()
         reformat_template: str = str()
-        raw_line_pickers: list['Config.RawLinePicker'] = field(
-            default_factory=list)
+        raw_line_pickers: list["Config.RawLinePicker"] = field(default_factory=list)
 
     # 从env读取
     # repository_token: str = str()
@@ -47,7 +44,7 @@ class Config():
 
     # 从配置文件json读取
     archived_issues_info: list[ArchivedIssuesInfo] = field(
-        default_factory=list[ArchivedIssuesInfo])
-    archive_document: ArchivedDocument = field(
-        default_factory=ArchivedDocument)
+        default_factory=list[ArchivedIssuesInfo]
+    )
+    archive_document: ArchivedDocument = field(default_factory=ArchivedDocument)
     output_path: str = str()

@@ -14,64 +14,85 @@ from src.config_data_source import (
     JsonConfigDataSource,
     ArgsConfigDataSource,
     EnvConfigDataSource,
-    str_to_bool
+    str_to_bool,
 )
 
 
 @pytest.mark.parametrize(
     "data,expected",
     [
-        ("true", True), ("TRUE", True),
-        ("yes", True), ("YES", True),
-        ("y", True), ("Y", True),
+        ("true", True),
+        ("TRUE", True),
+        ("yes", True),
+        ("YES", True),
+        ("y", True),
+        ("Y", True),
         ("1", True),
-        ("false", False), ("FALSE", False),
-        ("no", False), ("NO", False),
-        ("n", False), ("N", False),
+        ("false", False),
+        ("FALSE", False),
+        ("no", False),
+        ("NO", False),
+        ("n", False),
+        ("N", False),
         ("0", False),
-    ]
+    ],
 )
 def test_str_to_bool(data: str, expected: bool):
     assert str_to_bool(data) == expected
 
 
-class TestArgsConfigDataSource():
-
+class TestArgsConfigDataSource:
     @pytest.mark.parametrize(
         "args,config_key,expected_value,exception",
         [
             ([], [], [], ValueError),
             (["--config", "test.json"], [], [], ValueError),
-            (["--config", "test.json", "--version-start", "0.99.918"],
-             [], [], ValueError),
-            ([
-                "--config", "test.json",
-                "--repository-token", "test_token",
-                "--version-start", "0.99.918",
-                "--version-end", "0.99.919",
-                "--match-introduce-version", "true",
-                "--include-start-version", "true",
-                "--include-end-version", "true",
-            ],
-                ["config_path", "repository_token", "version_start",
-                 "version_end", "match_introduce_version"],
-                ["test.json", "test_token", "0.99.918",
-                 "0.99.919", True, True, True],
-                None),
-        ]
+            (
+                ["--config", "test.json", "--version-start", "0.99.918"],
+                [],
+                [],
+                ValueError,
+            ),
+            (
+                [
+                    "--config",
+                    "test.json",
+                    "--repository-token",
+                    "test_token",
+                    "--version-start",
+                    "0.99.918",
+                    "--version-end",
+                    "0.99.919",
+                    "--match-introduce-version",
+                    "true",
+                    "--include-start-version",
+                    "true",
+                    "--include-end-version",
+                    "true",
+                ],
+                [
+                    "config_path",
+                    "repository_token",
+                    "version_start",
+                    "version_end",
+                    "match_introduce_version",
+                ],
+                ["test.json", "test_token", "0.99.918", "0.99.919", True, True, True],
+                None,
+            ),
+        ],
     )
     def test_load(
         self,
         args: list[str],
         config_key: list[str],
         expected_value: list[Any],
-        exception: type[Exception] | None
+        exception: type[Exception] | None,
     ):
         mock_config = Config()
         with patch("sys.argv", args):
             if exception is not None:
-                with pytest.raises(
-                        exception):
+                with pytest.raises(exception):
                     ArgsConfigDataSource().load(mock_config)
             else:
                 ArgsConfigDataSource().load(mock_config)
@@ -79,27 +100,29 @@ class TestArgsConfigDataSource():
                     assert mock_config.__dict__[key] == value
 
 
-class TestEnvConfigDataSource():
-
+class TestEnvConfigDataSource:
     @pytest.mark.parametrize(
         "args,config_key,expected_value,exception",
         [
-            ({Env.REPOSITORY_TOKEN: "test_token_env"},
-             ["repository_token"], ["test_token_env"], None),
-        ]
+            (
+                {Env.REPOSITORY_TOKEN: "test_token_env"},
+                ["repository_token"],
+                ["test_token_env"],
+                None,
+            ),
+        ],
     )
     def test_load(
         self,
         args: list[str],
         config_key: list[str],
         expected_value: list[Any],
-        exception: type[Exception] | None
+        exception: type[Exception] | None,
     ):
         mock_config = Config()
         with patch.dict(os.environ, args):
             if exception is not None:
-                with pytest.raises(
-                        exception):
+                with pytest.raises(exception):
                     EnvConfigDataSource().load(mock_config)
             else:
                 mock_config.repository_token = "test_token"
@@ -112,14 +135,13 @@ class TestEnvConfigDataSource():
                     assert mock_config.__dict__[key] == value
 
 
-class TestJsonConfigDataSource():
-
+class TestJsonConfigDataSource:
     @pytest.mark.parametrize(
         "test_json_str",
         [
-            '''{"archived_issues_info": [{"url": "https://example.com.md","json_api": false,"content_key": "content","base64_decode": false,"use_token": false,"http_headers": {"Accept": "application/vnd.github.raw+json"}}],"archive_document": {"skip_header_rows": 5,"table_separator": "|","reformat_template": "1. [{issue_type}({md_link_square_start}{issue_location}{md_link_square_end}{issue_url_parents})]  {issue_title}","raw_line_pickers": [{"column_index": 0,"pick_types": ["first_number"],"regex": null},{"column_index": 1,"pick_types": ["issue_type", "issue_title", "issue_location", "issue_url"],"regex": "\\\\((.*?)\\\\)(.*)\\\\[(.*?)\\\\]{1}\\\\(?(.+(?=\\\\)))?"},{"column_index": 2,"pick_types": ["introduce_version"],"regex": null},{"column_index": 3,"pick_types": ["archived_version"],"regex": null}]},"output_path": "./output/ChangeLog.md"}
-            ''',
-        ]
+            """{"archived_issues_info": [{"url": "https://example.com.md","json_api": false,"content_key": "content","base64_decode": false,"use_token": false,"http_headers": {"Accept": "application/vnd.github.raw+json"}}],"archive_document": {"skip_header_rows": 5,"table_separator": "|","reformat_template": "1. [{issue_type}({md_link_square_start}{issue_location}{md_link_square_end}{issue_url_parents})]  {issue_title}","raw_line_pickers": [{"column_index": 0,"pick_types": ["first_number"],"regex": null},{"column_index": 1,"pick_types": ["issue_type", "issue_title", "issue_location", "issue_url"],"regex": "\\\\((.*?)\\\\)(.*)\\\\[(.*?)\\\\]{1}\\\\(?(.+(?=\\\\)))?"},{"column_index": 2,"pick_types": ["introduce_version"],"regex": null},{"column_index": 3,"pick_types": ["archived_version"],"regex": null}]},"output_path": "./output/ChangeLog.md"}
+            """,
+        ],
     )
     @patch("src.config_checker.ConfigChecker.run_all")
     def test_load(
