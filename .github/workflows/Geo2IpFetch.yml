@@ -6,6 +6,9 @@ on:
     - cron: "0 16 * * *"
   workflow_dispatch: # 允许手动触发
 
+env:
+  OUTPUT_WHITE_LIST_PATH: "./output/white-list-cn.conf"
+
 jobs:
   build:
     name: Update CN IP whitelist

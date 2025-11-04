@@ -16,7 +16,7 @@ MAXMIND_LICENSE="${MAXMIND_LICENSE:-}"
 MAXMIND_ACCOUNT_ID="${MAXMIND_ACCOUNT_ID:-}"
 TMP_ZIP_PATH="/tmp/GeoLite2-Country-CSV.zip"
 TMP_DIR="/tmp/GeoLite2-Country-CSV"
-OUT_FILE="./geo2-ip/output/white-list-cn.conf"
+OUTPUT_FILE="${OUTPUT_WHITE_LIST_PATH}"
 
 echo ">>> 检测环境变量 ..."
 echo "MAXMIND_LICENSE : ${MAXMIND_LICENSE}"
@@ -54,16 +54,16 @@ start_ts=$(date +%s.%N)
 CHINA_ID=$(awk -F, '$5=="CN" {print $1}' "${TMP_DIR}/GeoLite2-Country-Locations-en.csv")
 
 # 4. 过滤出 China 的 IPv4 CIDR，并写成 Nginx allow 格式
-echo ">>> 生成 ${OUT_FILE} ..."
-mkdir -p "$(dirname "${OUT_FILE}")"  
+echo ">>> 生成 ${OUTPUT_FILE} ..."
+mkdir -p "$(dirname "${OUTPUT_FILE}")"  
 awk -F, -v id="${CHINA_ID}" '$2==id {print "allow " $1 ";"}' \
-    "${TMP_DIR}/GeoLite2-Country-Blocks-IPv4.csv" > "${OUT_FILE}"
+    "${TMP_DIR}/GeoLite2-Country-Blocks-IPv4.csv" > "${OUTPUT_FILE}"
 
 # === 结束计时并输出 ===
 end_ts=$(date +%s.%N)
 elapsed=$(awk -v s="$start_ts" -v e="$end_ts" 'BEGIN{printf "%.6f", e - s}')
 echo ">>> 字符串处理完成 耗时 : ${elapsed} 秒 \n"
-echo ">>> 完成！共写入 $(wc -l < "${OUT_FILE}") 条记录到 ${OUT_FILE}"
+echo ">>> 完成！共写入 $(wc -l < "${OUTPUT_FILE}") 条记录到 ${OUTPUT_FILE}"
 
 # 5. 清理
 echo ">>> 清理临时文件 ..."

@@ -3,8 +3,6 @@ import os
 import json
 from pathlib import Path
 
-ip_white_list_path = Path("./geo2-ip/output/white-list-cn.conf")
-
 
 def load_and_parse_ip_white_list(
     path: Path,
@@ -86,9 +84,13 @@ def verify_ip_in_networks(
 if __name__ == "__main__":
     test_cn_ips = os.environ.get("TEST_CN_IPS")
     test_foreign_ips = os.environ.get("TEST_FOREIGN_IPS")
+    ip_white_list_path = os.environ.get("OUTPUT_WHITE_LIST_PATH")
+    if not ip_white_list_path:
+        raise KeyError('未设置环境变量 "OUTPUT_WHITE_LIST_PATH"')
+    ip_white_list_path = Path(ip_white_list_path)
+
     if not test_cn_ips or not test_foreign_ips:
-        print('未设置环境变量 "TEST_CN_IPS" 或 "TEST_FOREIGN_IPS"')
-        exit(1)
+        raise KeyError('未设置环境变量 "TEST_CN_IPS" 或 "TEST_FOREIGN_IPS"')
     test_cn_ips = json.loads(test_cn_ips)
     test_foreign_ips = json.loads(test_foreign_ips)
     networks = load_and_parse_ip_white_list(ip_white_list_path)
