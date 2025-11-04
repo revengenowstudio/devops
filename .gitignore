@@ -4,3 +4,4 @@ out
 *修改归档*.md
 .VSCodeCounter
 fetch_file
+*.conf
