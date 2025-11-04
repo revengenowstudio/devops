@@ -176,7 +176,27 @@ class ArchiveDocument:
                         ),
                     )[0]
                 )
-                version_matched = self.should_version_in_range(
+
+                introduce_version_matched = False
+                archived_version_matched = False
+
+                introduce_version = VersionCode(
+                    self.__apply_single_picker(
+                        column,
+                        self.__select_picker(
+                            PickerType.introduce_version, raw_line_pickers
+                        ),
+                    )[0]
+                )
+                introduce_version_matched = self.should_version_in_range(
+                    version_start,
+                    version_end,
+                    introduce_version,
+                    include_start_version,
+                    include_end_version,
+                )
+
+                archived_version_matched = self.should_version_in_range(
                     version_start,
                     version_end,
                     archived_version,
@@ -184,25 +204,18 @@ class ArchiveDocument:
                     include_end_version,
                 )
 
-                if not version_matched and not ignore_introduce_version:
-                    introduce_version = VersionCode(
-                        self.__apply_single_picker(
-                            column,
-                            self.__select_picker(
-                                PickerType.introduce_version, raw_line_pickers
-                            ),
-                        )[0]
-                    )
-                    version_matched = self.should_version_in_range(
-                        version_start,
-                        version_end,
-                        introduce_version,
-                        include_start_version,
-                        include_end_version,
-                    )
+                # “这个版本范围内修复和实现了之前提出的哪些 bug 和 feature，而版本范围内新提出和修复的就不算。”
+                # 版本范围内新提出的 Issue（即使也在范围内解决了）→ 不算
+                # 版本范围内解决的 Issue，但是在范围内提出的 → 不算
+                # 版本范围内解决的 Issue，但是在范围之前提出的 → 算
 
-                if version_matched:
-                    result.append(line)
+                if ignore_introduce_version:
+                    if not introduce_version_matched and archived_version_matched:
+                        result.append(line)
+
+                else:
+                    if introduce_version_matched or archived_version_matched:
+                        result.append(line)
 
             except Exception as exc:
                 print(
