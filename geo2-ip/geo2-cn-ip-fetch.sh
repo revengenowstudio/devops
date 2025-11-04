@@ -16,7 +16,7 @@ MAXMIND_LICENSE="${MAXMIND_LICENSE:-}"
 MAXMIND_ACCOUNT_ID="${MAXMIND_ACCOUNT_ID:-}"
 TMP_ZIP_PATH="/tmp/GeoLite2-Country-CSV.zip"
 TMP_DIR="/tmp/GeoLite2-Country-CSV"
-OUT_FILE="./geo2-ip/output/white-list-cn.conf"
+OUT_FILE="./output/white-list-cn.conf"
 
 echo ">>> 检测环境变量 ..."
 echo "MAXMIND_LICENSE : ${MAXMIND_LICENSE}"
