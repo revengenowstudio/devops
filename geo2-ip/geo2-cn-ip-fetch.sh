@@ -58,6 +58,9 @@ echo ">>> 生成 ${OUTPUT_FILE} ..."
 mkdir -p "$(dirname "${OUTPUT_FILE}")"  
 awk -F, -v id="${CHINA_ID}" '$2==id {print "allow " $1 ";"}' \
     "${TMP_DIR}/GeoLite2-Country-Blocks-IPv4.csv" > "${OUTPUT_FILE}"
+awk -F, -v id="${CHINA_ID}" '$2==id {print "allow " $1 ";"}' \
+    "${TMP_DIR}/GeoLite2-Country-Blocks-IPv6.csv" >> "${OUTPUT_FILE}"
+
 
 # === 结束计时并输出 ===
 end_ts=$(date +%s.%N)
