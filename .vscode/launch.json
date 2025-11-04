@@ -5,26 +5,6 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "archived_issues_collector main.py",
-            "type": "debugpy",
-            "request": "launch",
-            "program": "archived_issues_collector/src/main.py",
-            // "cwd": "${workspaceFolder}",
-            "args": [
-                "--config",
-                "archived_issues_collector/config/config.json",
-                "--repository-token",
-                "",
-                "--version-start",
-                "0.99.913",
-                "--version-end",
-                "0.99.915",
-                "--match-introduce-version",
-                "true"
-            ],
-            "console": "integratedTerminal"
-        },
-        {
             "name": "Python 调试程序: 当前文件",
             "type": "debugpy",
             "request": "launch",

@@ -1,5 +1,0 @@
-httpx
-
-# Development tools
-pytest
-pytest-mock
