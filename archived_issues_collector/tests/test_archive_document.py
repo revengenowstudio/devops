@@ -44,12 +44,21 @@ class TestArchiveDocument:
         table_separator = "|"
         version_start_str = "0.99.915"
         version_end_str = "0.99.920"
-        line1 = "|3|(Bug修复)修复了在攻城拔寨模式中，科技防空堡垒只能对正前方开火 [外部Issue#103] |0.99.915|0.99.919|"
-        line2 = "|4|(Bug修复)调整了恐怖机器人的攻击射程 [外部Issue#105]  |0.99.919  | 0.99.921|"
-        useless_string = "\njidoqj|iaohdoqweq\n"
-        line3 = "|7|(设定调整)英国圣骑士机甲无人操控时不能被神经毒气影响  [外部Issue#831](https://example.com) ||0.99.919|"
-        line4 = "|4|(设定引入)【合作任务】生化合作任务1-无人生还 任务设计与制作                                  [内部Issue#414](https://example.com/-/issues/414) ||0.99.916b2|"
-        raw_content = "\n".join([line1, line2, useless_string, line3, line4])
+        raw_content = """
+|13|(Bug修复)  忽略引入版本号:x  不忽略引入版本号:x [外部Issue#123] |0.99.921|0.99.922|                            
+|14|(Bug修复)  忽略引入版本号:x  不忽略引入版本号:√ [外部Issue#124] |0.99.918|0.99.922|                            
+|15|(Bug修复)  忽略引入版本号:x  不忽略引入版本号:x [外部Issue#125] |0.99.914|0.99.922|                            
+|16|(Bug修复)  忽略引入版本号:√  不忽略引入版本号:√ [外部Issue#126] |0.99.921|0.99.919|                            
+|17|(Bug修复)  忽略引入版本号:x  不忽略引入版本号:√ [外部Issue#127] |0.99.918|0.99.919|                            
+|18|(Bug修复)  忽略引入版本号:√  不忽略引入版本号:√ [外部Issue#128] |0.99.914|0.99.919|                            
+|19|(Bug修复)  忽略引入版本号:x  不忽略引入版本号:x [外部Issue#129] |0.99.921|0.99.914|                          
+|20|(Bug修复)  忽略引入版本号:x  不忽略引入版本号:√ [外部Issue#130] |0.99.918|0.99.914|                          
+|21|(Bug修复)  忽略引入版本号:x  不忽略引入版本号:x [外部Issue#131] |0.99.914|0.99.914|                          
+|200|(Bug修复) 忽略引入版本号:x  不忽略引入版本号:x [外部Issue#200] | |0.99.914|
+|201|(Bug修复) 忽略引入版本号:√  不忽略引入版本号:√ [内部Issue#201] | |0.99.918|
+|202|(Bug修复) 忽略引入版本号:x  不忽略引入版本号:x [内部Issue#202] | |0.99.921|
+\njidoqj|iaohdoqweq\n
+"""
 
         archive_document.loads(raw_content=raw_content, skip_header_rows=0)
         archive_document.search_line_in_version_range(
@@ -61,9 +70,12 @@ class TestArchiveDocument:
             include_start_version=True,
             include_end_version=True,
         )
-        assert archive_document.show_new_lines()[0].strip() == line1
-        assert archive_document.show_new_lines()[1].strip() == line3
-        assert archive_document.show_new_lines()[2].strip() == line4
+
+        result_line = [i.strip() for i in archive_document.show_new_lines()]
+
+        answer = [16, 18, 201]
+        for line, answer_number in zip(result_line, answer):
+            assert f"|{answer_number}|" in line
 
         archive_document.search_line_in_version_range(
             version_start_str=version_start_str,
@@ -74,7 +86,12 @@ class TestArchiveDocument:
             include_start_version=True,
             include_end_version=True,
         )
-        assert archive_document.show_new_lines()[1].strip() == line2
+
+        result_line = [i.strip() for i in archive_document.show_new_lines()]
+
+        answer = [14, 16, 17, 18, 20, 201]
+        for line, answer_number in zip(result_line, answer):
+            assert f"|{answer_number}|" in line
 
     def test_reformat_lines(self, archive_document: ArchiveDocument):
         pickers = [
