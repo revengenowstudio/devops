@@ -1,3 +1,4 @@
+from pathlib import Path
 import sys
 from archive_document import ArchiveDocument
 from json_config import Config
@@ -74,6 +75,9 @@ def main():
     # 查找符合版本号范围的内容,并将内容重新格式化
     archive_document = ArchiveDocument()
     print(Log.match_archive_content_in_version_range)
+
+    md_lines: list[str] = []
+    ref_lines: set[str] = set()
     for document_content in document_content_list:
         archive_document.loads(
             document_content, config.archive_document.skip_header_rows
@@ -92,7 +96,7 @@ def main():
                 count=archive_document.new_line_length
             )
         )
-        archive_document.reformat_lines(
+        part_md_lines, part_ref_lines = archive_document.reformat_lines(
             table_separator=config.archive_document.table_separator,
             raw_line_pickers=config.archive_document.raw_line_pickers,
             reformat_template=config.archive_document.reformat_template,
@@ -100,8 +104,12 @@ def main():
             reformat_url_ref_template=config.archive_document.reformat_url_ref_template,
         )
 
-        # 将结果写入文件中
-        archive_document.write_line_file(config.output_path)
+        md_lines.extend(part_md_lines)
+        ref_lines.update(part_ref_lines)
+
+    Path(config.output_path).write_text(
+        "\n".join(md_lines + list(ref_lines)), encoding="utf-8"
+    )
 
     print(Log.job_done)
 

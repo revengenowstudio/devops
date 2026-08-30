@@ -248,7 +248,7 @@ class ArchiveDocument:
         reformat_template: str,
         reformat_paragraph_template: str,
         reformat_url_ref_template: str,
-    ) -> None:
+    ) -> tuple[list[str], list[str]]:
         raw_lines = self.__new_lines
         reformat_lines_dict: dict[str, list[str]] = {}
         url_refs: list[str] = []
@@ -301,23 +301,24 @@ class ArchiveDocument:
                 result.append(line)
             result.append("")  # 换行用的
 
-        for ref_line in url_refs:
-            result.append(ref_line)
+        # for ref_line in url_refs:
+        #     result.append(ref_line)
 
         self.__new_lines = result
+        return result, url_refs
 
-    def write_line_file(self, output_path_str: str) -> None:
-        new_lines = self.__new_lines
+    # def write_line_file(self, output_path_str: str) -> None:
+    #     new_lines = self.__new_lines
 
-        output_path = Path(output_path_str)
-        print(Log.write_content_to.format(path=output_path))
-        try:
-            output_path.parent.mkdir(parents=True, exist_ok=True)
-            with open(output_path, "w", encoding="utf-8") as file:
-                file.write("\n".join(new_lines))
-        except Exception as exc:
-            print(ErrorMessage.write_file_error.format(exc=exc))
-        print(Log.write_content_success.format(path=output_path))
+    #     output_path = Path(output_path_str)
+    #     print(Log.write_content_to.format(path=output_path))
+    #     try:
+    #         output_path.parent.mkdir(parents=True, exist_ok=True)
+    #         with open(output_path, "w", encoding="utf-8") as file:
+    #             file.write("\n".join(new_lines))
+    #     except Exception as exc:
+    #         print(ErrorMessage.write_file_error.format(exc=exc))
+    #     print(Log.write_content_success.format(path=output_path))
 
     def show_lines(self) -> list[str]:
         return self.__lines.copy()
