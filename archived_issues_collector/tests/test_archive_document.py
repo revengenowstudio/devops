@@ -190,4 +190,4 @@ class TestArchiveDocument:
 
         archive_document.write_line_file(str(output_path))
 
-        assert output_path.read_text(encoding="utf-8") == f"{line1}\n" + f"{line2}\n"
+        assert output_path.read_text(encoding="utf-8") == f"{line1}\n" + f"{line2}"

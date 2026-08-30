@@ -139,7 +139,7 @@ class TestJsonConfigDataSource:
     @pytest.mark.parametrize(
         "test_json_str",
         [
-            """{"archived_issues_info": [{"url": "https://example.com.md","json_api": false,"content_key": "content","base64_decode": false,"use_token": false,"http_headers": {"Accept": "application/vnd.github.raw+json"}}],"archive_document": {"skip_header_rows": 5,"table_separator": "|","reformat_template": "1. [{issue_type}({md_link_square_start}{issue_location}{md_link_square_end}{issue_url_parents})]  {issue_title}","raw_line_pickers": [{"column_index": 0,"pick_types": ["first_number"],"regex": null},{"column_index": 1,"pick_types": ["issue_type", "issue_title", "issue_location", "issue_url"],"regex": "\\\\((.*?)\\\\)(.*)\\\\[(.*?)\\\\]{1}\\\\(?(.+(?=\\\\)))?"},{"column_index": 2,"pick_types": ["introduce_version"],"regex": null},{"column_index": 3,"pick_types": ["archived_version"],"regex": null}]},"output_path": "./output/ChangeLog.md"}
+            """{"archived_issues_info": [{"url": "https://example.com.md","json_api": false,"content_key": "content","base64_decode": false,"use_token": false,"http_headers": {"Accept": "application/vnd.github.raw+json"}}],"archive_document": {"skip_header_rows": 5,"table_separator": "|","reformat_template": "1. [{issue_type}({md_link_square_start}{issue_location}{md_link_square_end}{issue_url_parents})]  {issue_title}", "reformat_template": "1. [{issue_location}]  {issue_title}","reformat_url_ref_template": "[{issue_location}]: {issue_url}", "raw_line_pickers": [{"column_index": 0,"pick_types": ["first_number"],"regex": null},{"column_index": 1,"pick_types": ["issue_type", "issue_title", "issue_location", "issue_url"],"regex": "\\\\((.*?)\\\\)(.*)\\\\[(.*?)\\\\]{1}\\\\(?(.+(?=\\\\)))?"},{"column_index": 2,"pick_types": ["introduce_version"],"regex": null},{"column_index": 3,"pick_types": ["archived_version"],"regex": null}]},"output_path": "./output/ChangeLog.md"}
             """,
         ],
     )
@@ -150,17 +150,14 @@ class TestJsonConfigDataSource:
         test_json_str: str,
         tmp_path: str,
     ):
-        tmp_dir = Path(tmp_path)
-        tmp_dir.mkdir(exist_ok=True)
-        tmp_file = Path(tmp_dir / "test.json")
-        tmp_file.write_text(test_json_str, encoding="utf-8")
+        config_json_path = Path("archived_issues_collector/config/config.json")
 
         mock_config = Config()
         mock_run_all.return_value = None
 
-        JsonConfigDataSource(str(tmp_file)).load(mock_config)
+        JsonConfigDataSource(str(config_json_path)).load(mock_config)
 
         result_dict = asdict(mock_config)
-        excepted_dict = json.loads(test_json_str)
+        excepted_dict = json.loads(config_json_path.read_text(encoding="utf-8"))
         for key, _ in zip(excepted_dict.keys(), result_dict.keys()):
             assert result_dict[key] == excepted_dict[key]
