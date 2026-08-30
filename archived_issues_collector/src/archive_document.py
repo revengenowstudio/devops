@@ -3,6 +3,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, TypedDict
 
+from statistics_tools import IssueStatisticsTool, VersionMatchStatistics
 from exception import (
     PickerNotFoundError,
     ErrorMessage,
@@ -49,6 +50,7 @@ class ArchiveDocument:
     def __init__(self):
         self.__lines: list[str] = []
         self.__new_lines: list[str] = []
+        self.__issue_statistics: IssueStatisticsTool = IssueStatisticsTool()
 
     def __split_line(self, line: str, table_separator: str) -> list[str]:
         result = []
@@ -209,13 +211,26 @@ class ArchiveDocument:
                 # 版本范围内解决的 Issue，但是在范围内提出的 → 不算
                 # 版本范围内解决的 Issue，但是在范围之前提出的 → 算
 
+                is_matched = False
+
                 if ignore_introduce_version:
                     if archived_version_matched:
+                        is_matched = True
                         result.append(line)
 
                 else:
                     if introduce_version_matched or archived_version_matched:
+                        is_matched = True
                         result.append(line)
+
+                self.__issue_statistics.append_version_match_statistics(
+                    VersionMatchStatistics(
+                        line=line,
+                        introduce_version=introduce_version,
+                        archived_version=archived_version,
+                        in_target_version_range=is_matched,
+                    )
+                )
 
             except Exception as exc:
                 print(
@@ -313,3 +328,6 @@ class ArchiveDocument:
     def add_new_line(self, line: str) -> None:
         """不建议直接使用此方法"""
         self.__new_lines.append(line)
+
+    def print_statistics(self) -> None:
+        print(self.__issue_statistics.to_lines())

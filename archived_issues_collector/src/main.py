@@ -105,6 +105,8 @@ def main():
 
     print(Log.job_done)
 
+    archive_document.print_statistics()
+
 
 if __name__ == "__main__":
     main()
