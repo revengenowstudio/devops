@@ -49,7 +49,7 @@ class TestArchiveDocument:
 |14|(Bug修复)  忽略引入版本号:x  不忽略引入版本号:√ [外部Issue#124] |0.99.918|0.99.922|                            
 |15|(Bug修复)  忽略引入版本号:x  不忽略引入版本号:x [外部Issue#125] |0.99.914|0.99.922|                            
 |16|(Bug修复)  忽略引入版本号:√  不忽略引入版本号:√ [外部Issue#126] |0.99.921|0.99.919|                            
-|17|(Bug修复)  忽略引入版本号:x  不忽略引入版本号:√ [外部Issue#127] |0.99.918|0.99.919|                            
+|17|(Bug修复)  忽略引入版本号:√  不忽略引入版本号:√ [外部Issue#127] |0.99.918|0.99.919|                            
 |18|(Bug修复)  忽略引入版本号:√  不忽略引入版本号:√ [外部Issue#128] |0.99.914|0.99.919|                            
 |19|(Bug修复)  忽略引入版本号:x  不忽略引入版本号:x [外部Issue#129] |0.99.921|0.99.914|                          
 |20|(Bug修复)  忽略引入版本号:x  不忽略引入版本号:√ [外部Issue#130] |0.99.918|0.99.914|                          
@@ -73,7 +73,7 @@ class TestArchiveDocument:
 
         result_line = [i.strip() for i in archive_document.show_new_lines()]
 
-        answer = [16, 18, 201]
+        answer = [16, 17, 18, 201]
         for line, answer_number in zip(result_line, answer):
             assert f"|{answer_number}|" in line
 
@@ -128,17 +128,17 @@ class TestArchiveDocument:
         assert archive_document.show_new_lines()[1].strip() == (
             "[Bug修复([外部Issue#103](https://example.com))]  修复了在攻城拔寨模式中，科技防空堡垒只能对正前方开火"
         )
-        assert archive_document.show_new_lines()[3].strip() == (
+        assert archive_document.show_new_lines()[2].strip() == (
             "[Bug修复(外部Issue#105)]  调整了恐怖机器人的攻击射程"
         )
-        assert archive_document.show_new_lines()[5].strip() == ("## 设定引入")
-        assert archive_document.show_new_lines()[6].strip() == (
+        assert archive_document.show_new_lines()[4].strip() == ("## 设定引入")
+        assert archive_document.show_new_lines()[5].strip() == (
             "[设定引入([内部Issue#414](https://example.com/-/issues/414))]  【合作任务】生化合作任务1-无人生还 任务设计与制作"
         )
-        assert archive_document.show_new_lines()[8].strip() == (
+        assert archive_document.show_new_lines()[7].strip() == (
             "[外部Issue#103]: https://example.com"
         )
-        assert archive_document.show_new_lines()[9].strip() == (
+        assert archive_document.show_new_lines()[8].strip() == (
             "[内部Issue#414]: https://example.com/-/issues/414"
         )
 

@@ -210,7 +210,7 @@ class ArchiveDocument:
                 # 版本范围内解决的 Issue，但是在范围之前提出的 → 算
 
                 if ignore_introduce_version:
-                    if not introduce_version_matched and archived_version_matched:
+                    if archived_version_matched:
                         result.append(line)
 
                 else:
