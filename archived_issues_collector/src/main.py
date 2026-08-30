@@ -107,9 +107,10 @@ def main():
         md_lines.extend(part_md_lines)
         ref_lines.update(part_ref_lines)
 
-    Path(config.output_path).write_text(
-        "\n".join(md_lines + list(ref_lines)), encoding="utf-8"
-    )
+    output_path = Path(config.output_path)
+
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    output_path.write_text("\n".join(md_lines + list(ref_lines)), encoding="utf-8")
 
     print(Log.job_done)
 
