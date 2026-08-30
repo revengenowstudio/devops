@@ -284,7 +284,7 @@ class ArchiveDocument:
             result.append(reformat_paragraph_template.format(issue_type=issue_type))
             for line in lines:
                 result.append(line)
-                result.append("")  # 换行用的
+            result.append("")  # 换行用的
 
         for ref_line in url_refs:
             result.append(ref_line)
@@ -298,7 +298,7 @@ class ArchiveDocument:
         print(Log.write_content_to.format(path=output_path))
         try:
             output_path.parent.mkdir(parents=True, exist_ok=True)
-            with open(output_path, "a", encoding="utf-8") as file:
+            with open(output_path, "w", encoding="utf-8") as file:
                 file.write("\n".join(new_lines))
         except Exception as exc:
             print(ErrorMessage.write_file_error.format(exc=exc))
