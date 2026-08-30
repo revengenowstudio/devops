@@ -30,7 +30,9 @@
     "archive_document": {
         "skip_header_rows": 5,
         "table_separator": "|",
-        "reformat_template": "1. [{issue_type}({md_link_square_start}{issue_location}{md_link_square_end}{issue_url_parents})]  {issue_title}",
+        "reformat_paragraph_template": "## {issue_type}\n",
+        "reformat_template": "1. [{issue_location}]  {issue_title}",
+        "reformat_url_ref_template": "[{issue_location}]: {issue_url}",
         "raw_line_pickers": [
             {
                 "column_index": 0,

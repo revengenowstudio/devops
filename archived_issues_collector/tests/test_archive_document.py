@@ -107,6 +107,8 @@ class TestArchiveDocument:
         table_separator = "|"
         reformat_template = """[{issue_type}({md_link_square_start}{issue_location}{md_link_square_end}{issue_url_parents})]  {issue_title}
         """
+        reformat_paragraph_template = "## {issue_type}\n"
+        reformat_url_ref_template = "[{issue_location}]: {issue_url}"
 
         line1 = "|3   |(Bug修复)修复了在攻城拔寨模式中，科技防空堡垒只能对正前方开火 [外部Issue#103](https://example.com) |0.99.915| 0.99.919|"
         line2 = "|4   |(Bug修复)调整了恐怖机器人的攻击射程 [外部Issue#105]  |0.99.919  | 0.99.921|"
@@ -119,15 +121,25 @@ class TestArchiveDocument:
             table_separator=table_separator,
             raw_line_pickers=pickers,
             reformat_template=reformat_template,
+            reformat_paragraph_template=reformat_paragraph_template,
+            reformat_url_ref_template=reformat_url_ref_template,
         )
-        assert archive_document.show_new_lines()[0].strip() == (
+        assert archive_document.show_new_lines()[0].strip() == ("## Bug修复")
+        assert archive_document.show_new_lines()[1].strip() == (
             "[Bug修复([外部Issue#103](https://example.com))]  修复了在攻城拔寨模式中，科技防空堡垒只能对正前方开火"
         )
-        assert archive_document.show_new_lines()[1].strip() == (
+        assert archive_document.show_new_lines()[3].strip() == (
             "[Bug修复(外部Issue#105)]  调整了恐怖机器人的攻击射程"
         )
-        assert archive_document.show_new_lines()[2].strip() == (
+        assert archive_document.show_new_lines()[5].strip() == ("## 设定引入")
+        assert archive_document.show_new_lines()[6].strip() == (
             "[设定引入([内部Issue#414](https://example.com/-/issues/414))]  【合作任务】生化合作任务1-无人生还 任务设计与制作"
+        )
+        assert archive_document.show_new_lines()[8].strip() == (
+            "[外部Issue#103]: https://example.com"
+        )
+        assert archive_document.show_new_lines()[9].strip() == (
+            "[内部Issue#414]: https://example.com/-/issues/414"
         )
 
     @pytest.mark.parametrize(
@@ -168,17 +180,6 @@ class TestArchiveDocument:
             == expected_result
         )
 
-    def test_add_brake_line(self, archive_document: ArchiveDocument):
-        line1 = "123"
-        line2 = "124"
-        archive_document.add_new_line(line1)
-        archive_document.add_new_line(line2)
-
-        archive_document.add_brake_line()
-
-        assert archive_document.show_new_lines()[0] == f"{line1}\n"
-        assert archive_document.show_new_lines()[1] == f"{line2}\n"
-
     def test_write_line_file(self, archive_document: ArchiveDocument, tmpdir: Path):
         line1 = "123\n"
         line2 = "124"
@@ -189,4 +190,4 @@ class TestArchiveDocument:
 
         archive_document.write_line_file(str(output_path))
 
-        assert output_path.read_text(encoding="utf-8") == line1 + line2
+        assert output_path.read_text(encoding="utf-8") == f"{line1}\n" + f"{line2}\n"

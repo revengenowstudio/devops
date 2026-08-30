@@ -26,6 +26,8 @@ class Config:
         skip_header_rows: int = 0
         table_separator: str = str()
         reformat_template: str = str()
+        reformat_paragraph_template: str = str()
+        reformat_url_ref_template: str = str()
         raw_line_pickers: list["Config.RawLinePicker"] = field(default_factory=list)
 
     # 从env读取

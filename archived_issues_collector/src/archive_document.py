@@ -231,46 +231,75 @@ class ArchiveDocument:
         table_separator: str,
         raw_line_pickers: list[Config.RawLinePicker],
         reformat_template: str,
+        reformat_paragraph_template: str,
+        reformat_url_ref_template: str,
     ) -> None:
         raw_lines = self.__new_lines
-        reformat_lines: list[str] = []
+        reformat_lines_dict: dict[str, list[str]] = {}
+        url_refs: list[str] = []
+
         for line in raw_lines:
+            line = line.strip()
+            column = self.__split_line(line, table_separator)
+            issue_info = self.__apply_all_picker(column, raw_line_pickers)
+
+            if (issue_type := issue_info.get("issue_type")) is not None:
+                reformat_lines_dict[issue_type] = []
+
+        for line in raw_lines:
+            line = line.strip()
             try:
                 column = self.__split_line(line, table_separator)
                 issue_info = self.__apply_all_picker(column, raw_line_pickers)
-                issue_url_parents = issue_info["issue_url"]
+                issue_url = issue_info["issue_url"]
+                issue_url_parents = ""
+
                 md_link_square_start = ""
                 md_link_square_end = ""
                 if issue_info["issue_url"] != "":
-                    issue_url_parents = f"({issue_url_parents})"
+                    issue_url_parents = f"({issue_url})"
                     md_link_square_start = "["
                     md_link_square_end = "]"
-
-                reformat_lines.append(
-                    reformat_template.format(
-                        md_link_square_start=md_link_square_start,
-                        md_link_square_end=md_link_square_end,
-                        issue_url_parents=issue_url_parents,
-                        **issue_info,
+                    url_refs.append(
+                        reformat_url_ref_template.format(
+                            **issue_info,
+                        )
                     )
-                )
+
+                if (issue_type := issue_info.get("issue_type")) is not None:
+                    reformat_lines_dict[issue_type].append(
+                        reformat_template.format(
+                            md_link_square_start=md_link_square_start,
+                            md_link_square_end=md_link_square_end,
+                            issue_url_parents=issue_url_parents,
+                            **issue_info,
+                        )
+                    )
             except Exception as exc:
                 print(ErrorMessage.reformat_line_error.format(line=line, exc=exc))
-        self.__new_lines = reformat_lines
 
-    def add_brake_line(self) -> None:
-        self.__new_lines = [
-            i if i.endswith("\n") else i + "\n" for i in self.__new_lines
-        ]
+        result: list[str] = []
+
+        for issue_type, lines in reformat_lines_dict.items():
+            result.append(reformat_paragraph_template.format(issue_type=issue_type))
+            for line in lines:
+                result.append(line)
+                result.append("")  # 换行用的
+
+        for ref_line in url_refs:
+            result.append(ref_line)
+
+        self.__new_lines = result
 
     def write_line_file(self, output_path_str: str) -> None:
-        new_line = self.__new_lines
+        new_lines = self.__new_lines
+
         output_path = Path(output_path_str)
         print(Log.write_content_to.format(path=output_path))
         try:
             output_path.parent.mkdir(parents=True, exist_ok=True)
             with open(output_path, "a", encoding="utf-8") as file:
-                file.writelines(new_line)
+                file.write("\n".join(new_lines))
         except Exception as exc:
             print(ErrorMessage.write_file_error.format(exc=exc))
         print(Log.write_content_success.format(path=output_path))

@@ -92,8 +92,9 @@ def main():
             table_separator=config.archive_document.table_separator,
             raw_line_pickers=config.archive_document.raw_line_pickers,
             reformat_template=config.archive_document.reformat_template,
+            reformat_paragraph_template=config.archive_document.reformat_paragraph_template,
+            reformat_url_ref_template=config.archive_document.reformat_url_ref_template,
         )
-        archive_document.add_brake_line()
 
         # 将结果写入文件中
         archive_document.write_line_file(config.output_path)
