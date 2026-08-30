@@ -59,7 +59,9 @@ def main():
             document_content_list.append(document_content)
             print(
                 Log.getting_something_from_success.format(
-                    another=Log.archived_source.format(index=index_),
+                    another=Log.archived_source.format(
+                        index=index_, url=archived_issues_info.url
+                    ),
                     something=Log.archived_content,
                 )
             )
