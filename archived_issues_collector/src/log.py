@@ -1,7 +1,7 @@
 class Log:
     """日志信息"""
 
-    archived_source = """第{index}个归档文件源"""
+    archived_source = """第{index}个归档文件源 "{url}" """
     archived_content = """归档文件内容"""
     version_start = """起始版本号"""
     version_end = """结束版本号"""
