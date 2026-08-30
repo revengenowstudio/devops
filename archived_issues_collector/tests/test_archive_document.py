@@ -117,28 +117,26 @@ class TestArchiveDocument:
         for i in [line1, line2, useless_string, line3]:
             archive_document.add_new_line(i + "\n")
 
-        archive_document.reformat_lines(
+        md_lines, ref_lines = archive_document.reformat_lines(
             table_separator=table_separator,
             raw_line_pickers=pickers,
             reformat_template=reformat_template,
             reformat_paragraph_template=reformat_paragraph_template,
             reformat_url_ref_template=reformat_url_ref_template,
         )
-        assert archive_document.show_new_lines()[0].strip() == ("## Bug修复")
-        assert archive_document.show_new_lines()[1].strip() == (
+        assert md_lines[0].strip() == ("## Bug修复")
+        assert md_lines[1].strip() == (
             "[Bug修复([外部Issue#103](https://example.com))]  修复了在攻城拔寨模式中，科技防空堡垒只能对正前方开火"
         )
-        assert archive_document.show_new_lines()[2].strip() == (
+        assert md_lines[2].strip() == (
             "[Bug修复(外部Issue#105)]  调整了恐怖机器人的攻击射程"
         )
-        assert archive_document.show_new_lines()[4].strip() == ("## 设定引入")
-        assert archive_document.show_new_lines()[5].strip() == (
+        assert md_lines[4].strip() == ("## 设定引入")
+        assert md_lines[5].strip() == (
             "[设定引入([内部Issue#414](https://example.com/-/issues/414))]  【合作任务】生化合作任务1-无人生还 任务设计与制作"
         )
-        assert archive_document.show_new_lines()[7].strip() == (
-            "[外部Issue#103]: https://example.com"
-        )
-        assert archive_document.show_new_lines()[8].strip() == (
+        assert ref_lines[0].strip() == ("[外部Issue#103]: https://example.com")
+        assert ref_lines[1].strip() == (
             "[内部Issue#414]: https://example.com/-/issues/414"
         )
 
